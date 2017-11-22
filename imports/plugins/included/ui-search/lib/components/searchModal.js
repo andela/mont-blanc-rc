@@ -5,6 +5,7 @@ import { TextField, Button, IconButton, SortableTableLegacy } from "@reactioncom
 import ProductGridContainer from "/imports/plugins/included/product-variant/containers/productGridContainer";
 import { accountsTable } from "../helpers";
 
+
 class SearchModal extends Component {
   static propTypes = {
     accounts: PropTypes.array,
@@ -18,6 +19,21 @@ class SearchModal extends Component {
     tags: PropTypes.array,
     unmountMe: PropTypes.func,
     value: PropTypes.string
+  }
+
+  state = {
+    categories: []
+  }
+
+  productTypeChange = event => {
+    const categories = {
+      Country: [{ key: "Nigeria", value: "NG" }, { key: "Morocco", value: "MA" },
+        { key: "USA", value: "US" }, { key: "Brazil", value: "BR" },
+        { key: "England", value: "EN" } ],
+      Digital: [{ key: "Music" }, { key: "Video" }],
+      NonDigital: [{ key: "Electronics" }, { key: "Shirts" }, { key: "Shoes" }]
+    };
+    this.setState({ categories: categories[event.target.value] });
   }
 
   renderSearchInput() {
@@ -38,6 +54,57 @@ class SearchModal extends Component {
           containerStyle={{ fontWeight: "normal" }}
           onClick={this.props.handleClick}
         />
+      </div>
+    );
+  }
+
+  renderProductTypeFilter() {
+    const productTypes = ["Country", "Digital", "NonDigital"];
+
+    return (
+      <div>
+        <select
+          onChange={this.productTypeChange}
+          className="col-lg-3"
+        >
+          <option>--select product type--</option>
+          {productTypes.map((productType, i) =>
+            <option key={i}>{productType}</option>
+          )}
+        </select>
+      </div>
+    );
+  }
+
+  renderProductCategoryFilter() {
+    return (
+      <div>
+        <select
+          className="col-lg-3"
+        >
+          <option>--select category--</option>
+          {this.state.categories.map((category, i) =>
+            <option key={i} value={(category.value) ? category.value : category.key}>{category.key}</option>
+          )}
+        </select>
+      </div>
+    );
+  }
+
+  renderProductSort() {
+    const sorts = ["Price: low-high", "Price: high-low", "Date: new-old", "Date: old-new"];
+
+    return (
+      <div>
+        <select
+          value={this.props.value}
+          className="col-lg-3"
+        >
+          <option>--sort--</option>
+          {sorts.map((sort, i) =>
+            <option key={i}>{sort}</option>
+          )}
+        </select>
       </div>
     );
   }
@@ -98,6 +165,11 @@ class SearchModal extends Component {
           {this.renderSearchInput()}
           {this.renderSearchTypeToggle()}
           {this.props.tags.length > 0 && this.renderProductSearchTags()}
+        </div>
+        <div className="row filtersort">
+          {this.renderProductTypeFilter()}
+          {this.renderProductCategoryFilter()}
+          {this.renderProductSort()}
         </div>
         <div className="rui search-modal-results-container">
           {this.props.products.length > 0 &&
