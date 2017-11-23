@@ -69,7 +69,7 @@ Learn more on how to [configure your project](https://docs.reactioncommerce.com/
 
 ## Contribute
 
-:star: Star us on GitHub — it helps!
+:star: Star us on GitHub — it helps!!
 
 We love your pull requests! Check our our [`Pull Requests Encouraged`](https://github.com/reactioncommerce/reaction/issues?q=is%3Aissue+is%3Aopen+label%3Apull-requests-encouraged) issues tag for good issues to tackle.
 
