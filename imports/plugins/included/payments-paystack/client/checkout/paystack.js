@@ -1,53 +1,57 @@
 /* eslint camelcase: 0 */
 import {
   Meteor
-} from 'meteor/meteor';
+} from "meteor/meteor";
 import {
   Template
-} from 'meteor/templating';
+} from "meteor/templating";
 import {
   AutoForm
-} from 'meteor/aldeed:autoform';
+} from "meteor/aldeed:autoform";
 import {
   $
-} from 'meteor/jquery';
+} from "meteor/jquery";
 import {
   Reaction
-} from '/client/api';
+} from "/client/api";
 import {
   Cart,
   Shops,
   Packages
-} from '/lib/collections';
+} from "/lib/collections";
 import {
   Paystack
-} from '../../lib/api';
+} from "../../lib/api";
 import {
   PaystackPayment
-} from '../../lib/collections/schemas';
+} from "../../lib/collections/schemas";
 
-import './paystack.html';
+import "./paystack.html";
 
 let submitting = false;
 
-const uiEnd = (template, buttonText) => {
-  template.$(':input').removeAttr('disabled');
-  template.$('#btn-complete-order').text(buttonText);
-  return template.$('#btn-processing').addClass('hidden');
-};
+function uiEnd(template, buttonText) {
+  template.$(":input").removeAttr("disabled");
+  template.$("#btn-complete-order").text(buttonText);
+  return template.$("#btn-processing").addClass("hidden");
+}
 
-const paymentAlert = errorMessage => $('.alert').removeClass('hidden').text(errorMessage);
+function paymentAlert(errorMessage) {
+  return $(".alert").removeClass("hidden").text(errorMessage);
+}
 
-const hidePaymentAlert = () => $('.alert').addClass('hidden').text('');
+function hidePaymentAlert() {
+  return $(".alert").addClass("hidden").text("");
+}
 
-const handlePaystackSubmitError = (error) => {
-  const serverError = error !== null ? error.message : undefined;
+function handlePaystackSubmitError(error) {
+  const serverError = error !== null ? error.message : void 0;
   if (serverError) {
-    return paymentAlert(`Oops! ${serverError}`);
+    return paymentAlert("Oops! " + serverError);
   } else if (error) {
-    return paymentAlert(`Oops! ${error}`, null, 4);
+    return paymentAlert("Oops! " + error, null, 4);
   }
-};
+}
 
 Template.paystackPaymentForm.helpers({
   PaystackPayment() {
@@ -55,145 +59,72 @@ Template.paystackPaymentForm.helpers({
   }
 });
 
-const verifyPayment = (reference, secretKey, form, template, packageData) => {
-  Paystack.verify(reference, secretKey, (error, response) => {
-    if (error) {
-      handlePaystackSubmitError(error);
-      uiEnd(template, 'Resubmit payment');
-    } else {
-      const transaction = response.data;
-      submitting = false;
-      const paymentMethod = {
-        processor: 'Paystack',
-        paymentPackageId: packageData._id,
-        paymentSettingsKey: packageData.registry[0].settingsKey,
-        storedCard: transaction.authorization.card_type,
-        method: 'credit',
-        transactionId: transaction.reference,
-        riskLevel: 'normal',
-        currency: transaction.currency,
-        amount: transaction.amount / 100,
-        status: transaction.status ? 'passed' : 'failed',
-        mode: 'authorize',
-        createdAt: new Date(),
-        transactions: []
-      };
-      Alerts.toast('Transaction successful');
-      paymentMethod.transactions.push(transaction.authorization);
-      Meteor.call('cart/submitPayment', paymentMethod);
-    }
-  });
-};
+Template.paystackPaymentForm.onRendered(function () {
+  $("head").append(
+    '<script src="https://js.paystack.co/v1/inline.js"></script>'
+  );
+});
 
-const getExchangeRate = (currency) => {
-  let exchangeRate = 0;
-  if (currency === 'USD') {
-    exchangeRate = 360;
-  }
-  return exchangeRate;
-};
-
-/**
- *
- * @param {String} rawAmount
- * @param {String} currency
- * @returns {String} exchangedAmount
- */
-const loadAmount = (rawAmount, currency) => {
-  const exchangeRate = getExchangeRate(currency);
-  const nairaToKoboRate = 100;
-  let exchangedAmount = 0;
-  if (rawAmount) {
-    exchangedAmount = Math.round(rawAmount * exchangeRate * nairaToKoboRate);
-  }
-  return exchangedAmount;
-};
-
-AutoForm.addHooks('paystack-payment-form', {
-  onSubmit(doc) {
-    const total = Cart.findOne().getTotal();
-    const {
-      currency
-    } = Shops.findOne();
-
-    const exchangedValue = loadAmount(Number(total), currency);
-
+AutoForm.addHooks("paystack-payment-form", {
+  onSubmit: function (doc) {
     submitting = true;
-    const {
-      template
-    } = this;
+    const template = this.template;
     hidePaymentAlert();
-    const name = doc.payerName;
-    const email = doc.payerEmail;
     const form = {
-      name,
-      email
+      name: doc.payerName,
+      email: doc.payerEmail
     };
-
-    /**
-     *Get the application packages
-     */
-    Meteor.subscribe('Packages', Reaction.getShopId());
+    const storedCard = form.type.charAt(0).toUpperCase() + form.type.slice(1) + " " + doc.cardNumber.slice(-4);
+    Meteor.subscribe("Packages", Reaction.getShopId());
     const packageData = Packages.findOne({
-      name: 'paystack-paymentmethod',
+      name: "paystack-paymentmethod",
       shopId: Reaction.getShopId()
     });
-
-    /**
-     * Load paystack keys from the environment
-     */
-    Meteor.call('paystack/loadApiKeys', (keysRetrivalError, keysRetrivalResponse) => {
-      if (keysRetrivalResponse) {
-        const {
-          publicKey,
-          secretKey
-        } = keysRetrivalResponse;
-
-        /**
-         * Load the paystack platform
-         */
-        PaystackPop.setup({
-          key: publicKey,
-          email,
-          amount: exchangedValue,
-          callback: (response) => {
-            if (response.reference) {
-              const {
-                reference
-              } = response;
-              verifyPayment(reference, secretKey, form, template, packageData);
-            } else {
-              handlePaystackSubmitError(response);
-              uiEnd(template, 'Resubmit payment');
-            }
-          },
-
-          /**
-           *  Actions to run when the payment platform is closed
-           * @returns {*} void
-           */
-          onClose: () => {
-            const error = 'Payment window closed';
-            handlePaystackSubmitError(error);
-            uiEnd(template, 'Resubmit payment');
-          }
-        }).openIframe();
-      } else {
-        const error = 'Payment window not loaded';
+    Paystack.authorize(form, {
+      total: Cart.findOne().getTotal(),
+      currency: Shops.findOne().currency
+    }, function (error, transaction) {
+      submitting = false;
+      let paymentMethod;
+      if (error) {
         handlePaystackSubmitError(error);
-        uiEnd(template, 'Resubmit payment');
+        uiEnd(template, "Resubmit payment");
+      } else {
+        if (transaction.saved === true) {
+          submitting = false;
+          paymentMethod = {
+            processor: "Paystack",
+            paymentPackageId: packageData._id,
+            paymentSettingsKey: packageData.registry[0].settingsKey,
+            storedCard: storedCard,
+            method: "credit",
+            transactionId: transaction.transactionId,
+            riskLevel: transaction.riskLevel,
+            currency: transaction.currency,
+            amount: transaction.amount,
+            status: transaction.status,
+            mode: "authorize",
+            createdAt: new Date(),
+            transactions: []
+          };
+          paymentMethod.transactions.push(transaction.response);
+          Meteor.call("cart/submitPayment", paymentMethod);
+        } else {
+          handlePaystackSubmitError(transaction.error);
+          uiEnd(template, "Resubmit payment");
+        }
       }
     });
     return false;
   },
-  beginSubmit() {
-    this.template.$(':input').attr('disabled', true);
-    this.template.$('#btn-complete-order').text('Submitting ');
-    return this.template.$('#btn-processing').removeClass('hidden');
+  beginSubmit: function () {
+    this.template.$(":input").attr("disabled", true);
+    this.template.$("#btn-complete-order").text("Submitting ");
+    return this.template.$("#btn-processing").removeClass("hidden");
   },
-  endSubmit() {
+  endSubmit: function () {
     if (!submitting) {
-      return uiEnd(this.template, 'Complete your order');
+      return uiEnd(this.template, "Complete your order");
     }
   }
 });

@@ -1,48 +1,38 @@
 import {
   SimpleSchema
-} from 'meteor/aldeed:simple-schema';
+} from "meteor/aldeed:simple-schema";
 import {
   PackageConfig
-} from '/lib/collections/schemas/registry';
+} from "/lib/collections/schemas/registry";
 import {
   registerSchema
-} from '@reactioncommerce/reaction-collections';
+} from "@reactioncommerce/reaction-collections";
 
 export const PaystackPackageConfig = new SimpleSchema([
   PackageConfig, {
-    'settings.mode': {
+    "settings.mode": {
       type: Boolean,
       defaultValue: true
     },
-    'settings.apiKey': {
+    "settings.apiKey": {
       type: String,
-      label: 'API Key',
-      optional: true
-    },
-    'settings.publicKey': {
-      type: String,
-      label: 'API Key',
-      optional: true
-    },
-    'settings.privateKey': {
-      type: String,
-      label: 'API Key',
+      label: "API Key",
       optional: true
     }
   }
 ]);
 
-registerSchema('PaystackPackageConfig', PaystackPackageConfig);
+registerSchema("PaystackPackageConfig", PaystackPackageConfig);
 
 export const PaystackPayment = new SimpleSchema({
   payerName: {
     type: String,
-    label: 'Cardholder name'
+    label: "Cardholder name"
   },
   payerEmail: {
     type: String,
-    label: 'Cardholder Email'
+    label: "Cardholder Email"
   }
 });
 
-registerSchema('PaystackPayment', PaystackPayment);
+registerSchema("PaystackPayment", PaystackPayment);

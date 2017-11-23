@@ -1,4 +1,4 @@
 export {
   default as PaystackSettingsForm
 }
-  from './paystackSettingsForm.js';
+  from "./paystackSettingsForm.js";
