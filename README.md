@@ -89,7 +89,7 @@ We ensure that all releases are deployable as [Docker](https://hub.docker.com/r/
 
 ## Reaction Platform
 
-We also offer [Reaction Platform](https://reactioncommerce.com/hosting), a managed deployment platform integrated with the Reaction command line. 
+We also offer [Reaction Platform](https://reactioncommerce.com/hosting), a managed deployment platform integrated with the Reaction command lines. 
 
 ### License
 
