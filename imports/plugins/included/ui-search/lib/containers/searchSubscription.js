@@ -48,7 +48,6 @@ function composer(props, onData) {
     */
     if (props.searchCollection === "products") {
       productResults = Collections.ProductSearch.find().fetch();
-
       const productHashtags = getProductHashtags(productResults);
       tagSearchResults = Collections.Tags.find({
         _id: { $in: productHashtags }

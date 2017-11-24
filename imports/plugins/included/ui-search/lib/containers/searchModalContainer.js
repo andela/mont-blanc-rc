@@ -20,7 +20,8 @@ const wrapComponent = (Comp) => (
         collection: "products",
         value: localStorage.getItem("searchValue") || "",
         renderChild: true,
-        facets: []
+        facets: [],
+        displayFilter: "block"
       };
     }
 
@@ -67,7 +68,11 @@ const wrapComponent = (Comp) => (
     }
 
     handleToggle = (collection) => {
-      this.setState({ collection });
+      this.setState({
+        collection,
+        // Toggles select filter
+        displayFilter: collection === "accounts" ? "none" : "block"
+      });
     }
 
     handleChildUnmount = () =>  {
@@ -89,6 +94,7 @@ const wrapComponent = (Comp) => (
                 unmountMe={this.handleChildUnmount}
                 searchCollection={this.state.collection}
                 facets={this.state.facets}
+                displayFilter={this.state.displayFilter}
               />
             </div> : null
           }
