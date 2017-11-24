@@ -1,4 +1,4 @@
 export {
   default as PaystackSettingsFormContainer
 }
-  from "./paystackSettingsFormContainer";
+  from './paystackSettingsFormContainer';

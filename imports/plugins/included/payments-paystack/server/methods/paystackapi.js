@@ -1,36 +1,41 @@
 import {
   ValidatedMethod
-} from "meteor/mdg:validated-method";
+} from 'meteor/mdg:validated-method';
 import {
   SimpleSchema
-} from "meteor/aldeed:simple-schema";
+} from 'meteor/aldeed:simple-schema';
 import {
   Random
-} from "meteor/random";
+} from 'meteor/random';
 import {
   registerSchema
-} from "@reactioncommerce/reaction-collections";
+} from '@reactioncommerce/reaction-collections';
+
+/* eslint arrow-body-style: ['off', 'always'] */
 
 // Test card to use to add risk level flag for testing purposes only.
-export const RISKY_TEST_CARD = "4000000000009235";
+export const RISKY_TEST_CARD = '4000000000009235';
 
 // You should not implement ThirdPartyAPI. It is supposed to represent your third party API
 // And is called so that it can be stubbed out for testing. This would be a library
 // like Stripe or Authorize.net usually just included with a NPM.require
 
 const ThirdPartyAPI = {
-  authorize: function (transactionType, cardData, paymentData) {
-    if (transactionType === "authorize") {
+  authorize: (transactionType, cardData, paymentData) => {
+    if (transactionType === 'authorize') {
       const results = {
         success: true,
         id: Random.id(),
         amount: paymentData.total,
-        currency: "USD"
+        currency: 'USD'
       };
-      // This is for testing risk evaluation. Proper payment methods have dectection mechanisms for this.
-      // This is just a sample
+      /**
+       * This is for testing risk evaluation.
+       * Proper payment methods have dectection mechanisms for this.
+       * This is just a sample
+       */
       if (cardData.number === RISKY_TEST_CARD) {
-        results.riskStatus = "highest_risk_level";
+        results.riskStatus = 'highest_risk_level';
       }
       return results;
     }
@@ -38,37 +43,40 @@ const ThirdPartyAPI = {
       success: false
     };
   },
-  capture: function (authorizationId, amount) {
+  capture: (authorizationId, amount) => {
     return {
-      authorizationId: authorizationId,
-      amount: amount,
+      authorizationId,
+      amount,
       success: true
     };
   },
-  refund: function (transactionId, amount) {
+  refund: (transactionId, amount) => {
     return {
       success: true,
-      transactionId: transactionId,
-      amount: amount
+      transactionId,
+      amount
     };
   },
-  listRefunds: function (transactionId) {
+  listRefunds: (transactionId) => {
     return {
-      transactionId: transactionId,
+      transactionId,
       refunds: [{
-        type: "refund",
+        type: 'refund',
         amount: 3.99,
         created: 1454034562000,
-        currency: "usd",
+        currency: 'usd',
         raw: {}
       }]
     };
   }
 };
 
-// This is the "wrapper" functions you should write in order to make your code more
-// testable. You can either mirror the API calls or normalize them to the authorize/capture/refund/refunds
-// that Reaction is expecting
+/**
+ * This is the 'wrapper' functions you should write in order to
+ * make your code more testable.
+ * You can either mirror the API calls or normalize them to the
+ * authorize/capture/refund/refunds that Reaction is expecting
+ */
 export const PaystackApi = {};
 PaystackApi.methods = {};
 
@@ -81,7 +89,7 @@ export const cardSchema = new SimpleSchema({
   }
 });
 
-registerSchema("cardSchema", cardSchema);
+registerSchema('cardSchema', cardSchema);
 
 export const paymentDataSchema = new SimpleSchema({
   total: {
@@ -92,10 +100,10 @@ export const paymentDataSchema = new SimpleSchema({
   }
 });
 
-registerSchema("paymentDataSchema", paymentDataSchema);
+registerSchema('paymentDataSchema', paymentDataSchema);
 
 PaystackApi.methods.authorize = new ValidatedMethod({
-  name: "PaystackApi.methods.authorize",
+  name: 'PaystackApi.methods.authorize',
   validate: new SimpleSchema({
     transactionType: {
       type: String
@@ -118,7 +126,7 @@ PaystackApi.methods.authorize = new ValidatedMethod({
 });
 
 PaystackApi.methods.capture = new ValidatedMethod({
-  name: "PaystackApi.methods.capture",
+  name: 'PaystackApi.methods.capture',
   validate: new SimpleSchema({
     authorizationId: {
       type: String
@@ -130,14 +138,16 @@ PaystackApi.methods.capture = new ValidatedMethod({
   }).validator(),
   run(args) {
     const transactionId = args.authorizationId;
-    const amount = args.amount;
+    const {
+      amount
+    } = args;
     const results = ThirdPartyAPI.capture(transactionId, amount);
     return results;
   }
 });
 
 PaystackApi.methods.refund = new ValidatedMethod({
-  name: "PaystackApi.methods.refund",
+  name: 'PaystackApi.methods.refund',
   validate: new SimpleSchema({
     transactionId: {
       type: String
@@ -148,15 +158,17 @@ PaystackApi.methods.refund = new ValidatedMethod({
     }
   }).validator(),
   run(args) {
-    const transactionId = args.transactionId;
-    const amount = args.amount;
+    const {
+      transactionId,
+      amount
+    } = args;
     const results = ThirdPartyAPI.refund(transactionId, amount);
     return results;
   }
 });
 
 PaystackApi.methods.refunds = new ValidatedMethod({
-  name: "PaystackApi.methods.refunds",
+  name: 'PaystackApi.methods.refunds',
   validate: new SimpleSchema({
     transactionId: {
       type: String
