@@ -1,10 +1,10 @@
 import {
   PaystackSettingsFormContainer
-} from "../containers";
+} from '../containers';
 import {
   Template
-} from "meteor/templating";
-import "./paystack.html";
+} from 'meteor/templating';
+import './paystack.html';
 
 Template.paystackSettings.helpers({
   PaystackSettings() {

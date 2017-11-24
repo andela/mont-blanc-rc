@@ -8,7 +8,8 @@ class PaystackSettingsForm extends Component {
     super(props);
     this.state = {
       settings: {
-        apiKey: props.settings.apiKey,
+        secretKey: props.settings.secretKey,
+        publicKey: props.settings.publicKey,
         support: props.settings.support
       },
       checkbox: {
@@ -30,6 +31,7 @@ class PaystackSettingsForm extends Component {
     const { checkbox, settings } = this.state;
     checkbox[name] = isInputChecked;
     this.setState({ checkbox });
+    console.log(settings);
     if (!_.includes(settings.support, name) && isInputChecked) {
       settings.support.push(name);
       return this.setState({ settings });
@@ -48,10 +50,10 @@ class PaystackSettingsForm extends Component {
   render() {
     const { settings } = this.props;
     const setting = this.state.settings;
-
+    console.log(this.state);
     return (
       <div>
-        { !settings.apiKey &&
+        { (!settings.secretKey && !settings.publicKey) &&
           <div className="alert alert-info">
             <Translation defaultValue="PaystackCredentials" i18nKey="admin.paymentSettings.paystackCredentials"/>
           </div>
@@ -59,11 +61,19 @@ class PaystackSettingsForm extends Component {
 
         <form onSubmit={this.handleSubmit}>
           <TextField
-            label="API Key"
-            name="apiKey"
+            label="Public Key"
+            name="publicKey"
             type="text"
             onChange={this.handleStateChange}
-            value={setting.apiKey}
+            value={setting.publicKey}
+          />
+
+          <TextField
+            label="Secret Key"
+            name="secretKey"
+            type="text"
+            onChange={this.handleStateChange}
+            value={setting.secretKey}
           />
 
           <label className="control-label">

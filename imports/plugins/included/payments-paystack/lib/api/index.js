@@ -1,4 +1,1 @@
-export {
-  Paystack
-}
-  from "./paystack";
+export { Paystack } from './paystack';
