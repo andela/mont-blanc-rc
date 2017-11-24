@@ -1,1 +1,1 @@
-export * from "./paystack";
+export * from './paystack';
