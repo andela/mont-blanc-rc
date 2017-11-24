@@ -76,13 +76,8 @@ Meteor.methods({
     check(transactionType, String);
     check(cardData, {
       name: String,
-      number: ValidCardNumber,
-      expireMonth: ValidExpireMonth,
-      expireYear: ValidExpireYear,
-      cvv2: ValidCVV,
-      type: String
+      email: String
     });
-
     check(paymentData, {
       total: String,
       currency: String

@@ -59,12 +59,6 @@ Template.paystackPaymentForm.helpers({
   }
 });
 
-Template.paystackPaymentForm.onRendered(function () {
-  $("head").append(
-    '<script src="https://js.paystack.co/v1/inline.js"></script>'
-  );
-});
-
 AutoForm.addHooks("paystack-payment-form", {
   onSubmit: function (doc) {
     submitting = true;
@@ -74,12 +68,16 @@ AutoForm.addHooks("paystack-payment-form", {
       name: doc.payerName,
       email: doc.payerEmail
     };
-    const storedCard = form.type.charAt(0).toUpperCase() + form.type.slice(1) + " " + doc.cardNumber.slice(-4);
     Meteor.subscribe("Packages", Reaction.getShopId());
     const packageData = Packages.findOne({
       name: "paystack-paymentmethod",
       shopId: Reaction.getShopId()
     });
+    const {
+      apiKey,
+      shopId,
+      _id
+    } = packageData;
     Paystack.authorize(form, {
       total: Cart.findOne().getTotal(),
       currency: Shops.findOne().currency
@@ -96,7 +94,7 @@ AutoForm.addHooks("paystack-payment-form", {
             processor: "Paystack",
             paymentPackageId: packageData._id,
             paymentSettingsKey: packageData.registry[0].settingsKey,
-            storedCard: storedCard,
+            storedCard: "",
             method: "credit",
             transactionId: transaction.transactionId,
             riskLevel: transaction.riskLevel,

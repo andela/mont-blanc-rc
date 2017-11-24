@@ -24,7 +24,6 @@ const ThirdPartyAPI = {
       const results = {
         success: true,
         id: Random.id(),
-        cardNumber: cardData.number.slice(-4),
         amount: paymentData.total,
         currency: "USD"
       };
@@ -74,22 +73,10 @@ export const PaystackApi = {};
 PaystackApi.methods = {};
 
 export const cardSchema = new SimpleSchema({
-  number: {
-    type: String
-  },
   name: {
     type: String
   },
-  cvv2: {
-    type: String
-  },
-  expireMonth: {
-    type: String
-  },
-  expireYear: {
-    type: String
-  },
-  type: {
+  email: {
     type: String
   }
 });
