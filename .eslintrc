@@ -11,7 +11,8 @@
     "Alerts": true, // this needs to get cleaned up, but ignoring for now
     "jest": true,
     "expect": true,
-    "test": true
+    "test": true,
+    "PaystackPop": true
   },
   "parserOptions": {
     "ecmaVersion": 8,
@@ -45,6 +46,10 @@
       "error",
       "multi-line"
     ],
+    "class-methods-use-this": 0,
+    "react/forbid-prop-types": 0,
+    "no-empty-pattern": 0,
+    "react/no-unused-state": 0,
     "no-shadow": [
       "error",
       {
