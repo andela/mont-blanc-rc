@@ -6,6 +6,11 @@ import "velocity-animate/velocity.ui";
 import { Components } from "@reactioncommerce/reaction-components";
 import { Router } from "/client/api";
 import update from "react/lib/update";
+import { Meteor } from "meteor/meteor";
+import _ from "lodash";
+
+
+const upload_preset = 'bjfllgrd';
 
 const fieldNames = [
   "title",
@@ -41,8 +46,32 @@ class ProductAdmin extends Component {
     this.state = {
       expandedCard: this.fieldGroupForFieldName(props.editFocus),
       product: props.product,
-      viewProps: props.viewProps
+      viewProps: props.viewProps,
+      categories: [],
+      nonDigitalProductArray: [],
+      digitalProductArray: [],
+      selectedDigital: false,
+      isUploading: false,
+      progressBarColor: '#1790f7',
+      loadingPercentage: 0,
+      progressBarTitle: 'loading....'
     };
+  }
+
+  componentDidMount() {
+    // fetch product category documents
+    Meteor.call("productCategory", (errors, result) => {
+      if (errors) {
+        return errors;
+      }
+      // Updates state of nondigital and digital product categories and products
+      this.setState({
+        // filters non digital product categories
+        nonDigitalProductArray: _.filter(result, ["isDigital", false]),
+        // filters digital product categories
+        digitalProductArray: _.filter(result, ["isDigital", true]),
+      });
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -217,6 +246,106 @@ class ProductAdmin extends Component {
   isExpanded = (groupName) => {
     return this.state.expandedCard === groupName;
   }
+  //Helper method to update product field
+  updateProductField = (productId, fieldName, productData) => {
+    Meteor.call("products/updateProductField", productId, fieldName, productData);
+  }
+
+  // it listens to onchange event on product type select
+  productTypeChange = (event) => {
+    let filterTerm;
+    // Product categories object
+    const categories = {
+      Digital: this.state.digitalProductArray,
+      NonDigital: this.state.nonDigitalProductArray
+    };
+    // filter and update products by product types
+    if (event.target.value.toString() === "Digital") {
+      filterTerm = "digital";
+    } else {
+      filterTerm = "nonDigital";
+    }
+    this.setState({
+      isUploading: false,
+      categories: categories[event.target.value],
+      selectedDigital: event.target.value.toString() === "Digital" ? true : false
+    });
+    this.updateProductField(this.product._id, "productType", filterTerm);
+  }
+
+  // filters product by category
+  handleproductCategoryChange = (event) => {
+    this.updateProductField(this.product._id, "productCategory", event.target.value.toString());
+  };
+
+  renderProductCategoryFilter() {
+    const options = _.map(this.state.categories, (val, key) =>
+      <option key={key} value={val.title}>{val.title}</option>);
+
+    return (<div>
+      <label htmlFor="productCategory">Product Category</label>
+      <select className="form-control"
+        name="productCategory"
+        onChange={this.handleproductCategoryChange}
+        defaultValue="Select Product Category"
+        required
+      >
+        <option>Select Product Catgeory</option>
+        {options}
+      </select>
+    </div>);
+  }
+  uploadFile = (productFile) => {
+    let responseMessage;
+    const data = new FormData();
+    data.append('file', productFile);
+    data.append('upload_preset', upload_preset);
+    fetch('https://api.cloudinary.com/v1_1/tosmak/auto/upload', {
+      method: 'POST',
+      body: data
+    })
+      .then(
+      (res) => {
+        if (res.status >= 400) {
+          throw res.status;
+        }
+        else if (res.status === 200) {
+          return res.json()
+        }
+      })
+      .then((response) => {
+        this.setState({
+          progressBarColor: '#96d496',
+          loadingPercentage: 100,
+          progressBarTitle: 'Done'
+        })
+        this.updateProductField(this.state.product._id, "productFileUrl", response.secure_url);
+      })
+      .catch(error => {
+        return 'Bad request';
+      });
+  }
+
+  handleFileChange = (event) => {
+    event.preventDefault();
+    const reader = new FileReader();
+    const productFile = event.target.files[0];
+    reader.onload = () => {
+      this.setState({
+        progressBarColor: '#1790f7',
+        loadingPercentage: 0,
+        isUploading: false,
+        progressBarTitle: 'loading....'
+      })
+    };
+    reader.onloadend = () => {
+      this.setState({
+        isUploading: true
+      })
+      this.uploadFile(productFile)
+    };
+    reader.readAsDataURL(productFile);
+  }
 
   render() {
     return (
@@ -256,6 +385,30 @@ class ProductAdmin extends Component {
               ref="titleInput"
               value={this.product.title}
             />
+            <label htmlFor="productType">Product Type</label>
+            <select className="form-control"
+              name="productType"
+              onChange={this.productTypeChange}
+              defaultValue="Select Product Type"
+              required
+            >
+              <option>Select Product Type</option>
+              <option>Digital</option>
+              <option>NonDigital</option>
+            </select>
+            <br />
+            {this.renderProductCategoryFilter()}
+            <br />
+            {this.state.selectedDigital && <input
+              onChange={this.handleFileChange}
+              name="fileUplaod"
+              type="file" hidden
+            />}
+            <br />
+            {this.state.isUploading && this.state.selectedDigital
+              && <button style={{ backgroundColor: this.state.progressBarColor }}
+                className="btn loading">{this.state.progressBarTitle}</button>}
+            <br />
             <Components.TextField
               helpText={this.permalink}
               i18nKeyLabel="productDetailEdit.permalink"
