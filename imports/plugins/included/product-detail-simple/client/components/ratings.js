@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
-import { setTimeout } from 'timers';
-import { Meteor } from "meteor/meteor";
-import RatingsForm from './ratingsForm';
+import { Meteor } from 'meteor/meteor';
 import { Reaction } from '/client/api';
+import { setTimeout } from 'timers';
+import RatingsForm from './ratingsForm';
 
-/**
- * 
- * @class Ratings
- * @classdesc product ratings and reviews
- * @extends {Component}
- */
 class Ratings extends Component {
   constructor(props) {
     super(props);
@@ -19,13 +13,9 @@ class Ratings extends Component {
     this.state = {
       displayForm: false,
       addReviewBtn: true,
-      reviewText: "",
+      reviewText: '',
       ratingValue: 0,
-      errorMessage: "",
-      errorStatus: false,
-      reviews: [],
-      successStatus: false,
-      successMessage: ""
+      reviews: []
     };
 
     // Bind button to this class
@@ -42,11 +32,11 @@ class Ratings extends Component {
    * @memberof Ratings
    */
   componentDidMount() {
-    if (Reaction.hasPermission("admin") || Meteor.user().emails.length === 0) {
+    if (Reaction.hasPermission('admin') || Meteor.user().emails.length === 0) {
       this.setState({ displayForm: false, addReviewBtn: false });
     } // eslint-disable-line
 
-    Meteor.call("fetchRatings", this.productInfo.product._id, (error, response) => {
+    Meteor.call('fetchRatings', this.productInfo.product._id, (error, response) => {
       if (error) {
         return error;
       }
@@ -54,7 +44,7 @@ class Ratings extends Component {
     });
 
     // Call fetchOrders method to fetch all orders where the userid is thesame as ($this) userid
-    Meteor.call("fetchOrders", this.productInfo.product._id, (error, result) => {
+    Meteor.call('fetchOrders', this.productInfo.product._id, (error, result) => {
       if (error) {
         return error;
       }
@@ -88,44 +78,39 @@ class Ratings extends Component {
   saveReview(event) {
     event.preventDefault();
     this.setState({
-      errorStatus: false,
-      errorMessage: "",
-      canRateProduct: false,
-      successStatus: false,
-      successMessage: ""
+      canRateProduct: false
     });
 
     // Check if no star is selected and also if there is no review text,
     // Throw error if there's no star and review
     if ((this.state.ratingValue === 0) && (!this.state.reviewText)) {
-      this.setState({ errorStatus: true, errorMessage: "Please rate the product or enter a review" });
+      Alerts.toast('Please select a rating star', 'error');
     } else if ((this.state.ratingValue) > 0 && (!this.state.reviewText)) {
       // Check if there is rating but no reviewtext
 
       // Compose ratings and review object using details from users input
       const ratingsObject = {
         rating: this.state.ratingValue,
-        reviewtext: "No review yet",
+        reviewtext: 'No review yet',
         title: Meteor.user().name,
         productId: this.productInfo.product._id
       };
 
 
       //  Save ratings to the database
-      Meteor.call("saveRatings", ratingsObject, (error, reply) => {
+      Meteor.call('saveRatings', ratingsObject, (error, reply) => {
         if (error) {
           return error; //eslint-disable-line
         }
         this.setState({
           reviews: reply,
-          reviewText: "",
-          successStatus: true,
-          successMessage: "Rating has been saved",
+          reviewText: '',
           ratingValue: 0
         });
+        Alerts.toast('Ratings saved', 'success');
         setTimeout(() => {
           this.cancelReview();
-        }, 1500);
+        }, 1000);
       });
     } else {
       // Compose ratings and review object using details from users input if otherwise
@@ -137,19 +122,18 @@ class Ratings extends Component {
       };
 
       //  Save ratings to the database
-      Meteor.call("saveRatings", ratingsObject, (error, reply) => {
+      Meteor.call('saveRatings', ratingsObject, (error, reply) => {
         if (error) {
           return error; //eslint-disable-line
         }
         this.setState({
           reviews: reply,
-          reviewText: "",
-          successStatus: true,
-          successMessage: "Rating has been saved",
+          reviewText: '',
           ratingValue: 0 });
+        Alerts.toast('Ratings saved', 'success');
         setTimeout(() => {
           this.cancelReview();
-        }, 1500);
+        }, 1000);
       });
     }
   }
@@ -163,11 +147,7 @@ class Ratings extends Component {
     this.setState({
       displayForm: false,
       addReviewBtn: true,
-      errorStatus: false,
-      errorMessage: "",
-      successStatus: false,
-      successMessage: "",
-      reviewText: "",
+      reviewText: '',
       ratingValue: 0 });
   }
   /**
@@ -177,10 +157,7 @@ class Ratings extends Component {
    */
   handleUserInput(event) {
     event.preventDefault();
-    this.setState({
-      [ event.target.name ]: event.target.value,
-      errorMessage: "",
-      errorStatus: false });
+    this.setState({ [ event.target.name ]: event.target.value,});
   }
 
   /**
@@ -205,11 +182,7 @@ class Ratings extends Component {
             getStarValue = {this.getStarValue}
             cancelReview = {this.cancelReview}
             value= {this.state.ratingValue}
-            reviews = {this.state.reviews}
-            errorStatus = {this.state.errorStatus}
-            errorMessage = {this.state.errorMessage}
-            successStatus = {this.state.successStatus}
-            successMessage = {this.state.successMessage}
+            reviews= {this.state.reviews}
           />
         </div>
       </div>
