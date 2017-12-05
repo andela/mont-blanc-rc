@@ -84,6 +84,17 @@ class MainDropdown extends Component {
     );
   }
 
+  renderWallet() {
+    return (
+      <a
+        className="btn btn-primary btn-block accounts-btn-tag"
+        type="button"
+        href="/wallet"
+      >Wallet
+      </a>
+    );
+  }
+
   renderSignInComponent() {
     return (
       <div className="accounts-dropdown">
@@ -115,6 +126,7 @@ class MainDropdown extends Component {
             >
               {this.renderUserIcons()}
               {this.renderAdminIcons()}
+              {this.renderWallet()}
               {this.renderSignOutButton()}
             </Components.DropDownMenu>
           </div>
