@@ -51,10 +51,12 @@ class ProductAdmin extends Component {
       nonDigitalProductArray: [],
       digitalProductArray: [],
       selectedDigital: false,
+      selectedCategory: false,
       isUploading: false,
       progressBarColor: '#1790f7',
       loadingPercentage: 0,
-      progressBarTitle: 'loading....'
+      progressBarTitle: 'loading....',
+      attributeValue: ""
     };
   }
 
@@ -275,7 +277,34 @@ class ProductAdmin extends Component {
 
   // filters product by category
   handleproductCategoryChange = (event) => {
+
+    const categorize = event.target.value.toString();
+
+    switch (categorize) {
+      case "Audio":
+        this.setState({
+          attributeValue: ".mp3"
+        })
+        break;
+      case "Ebook":
+        this.setState({
+          attributeValue: "application/pdf"
+        })
+        break;
+      case "Video":
+        this.setState({
+          attributeValue: "video/*"
+        })
+        break;
+      default:
+        this.setState({
+          attributeValue: ""
+        })
+    }
     this.updateProductField(this.product._id, "productCategory", event.target.value.toString());
+    this.setState({
+      selectedCategory: true
+    })
   };
 
   renderProductCategoryFilter() {
@@ -335,7 +364,7 @@ class ProductAdmin extends Component {
         progressBarColor: '#1790f7',
         loadingPercentage: 0,
         isUploading: false,
-        progressBarTitle: 'loading....'
+        progressBarTitle: 'uploading....'
       })
     };
     reader.onloadend = () => {
@@ -399,10 +428,12 @@ class ProductAdmin extends Component {
             <br />
             {this.renderProductCategoryFilter()}
             <br />
-            {this.state.selectedDigital && <input
+            {(this.state.selectedDigital && this.state.selectedCategory) && <input
               onChange={this.handleFileChange}
+              accept={this.state.attributeValue}
+              id="fileType"
               name="fileUplaod"
-              type="file" hidden
+              type="file"
             />}
             <br />
             {this.state.isUploading && this.state.selectedDigital
