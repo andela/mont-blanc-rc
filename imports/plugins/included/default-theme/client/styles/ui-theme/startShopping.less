@@ -1,0 +1,69 @@
+.fashionStatement{
+    background-image: url('/resources/fashion-statement.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 650px;
+    margin-top: 50px;
+}
+
+.fashionStatement .statement {
+    margin-top: 10%;
+    float: right;
+    color: white;
+}
+
+.fashionStatement .statement h1{
+   font-size: 60px;
+}
+
+.fashionStatement .statement p{
+    margin-top: 30px;
+    font-size: 20px;
+}
+
+.fashionStatement .statement a{
+    color: white
+}
+
+.fashionStatement .statement .shopping {
+    background: #3399cc;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 10px;
+    transition: color 1s, background 1s;
+}
+
+.fashionStatement .statement .shopping:hover {
+    color: #3399cc;
+    background: white;
+}
+
+/* WHERE WIDTH IS 500 AND BELOW */
+@media screen and (max-width: 500px) {
+    .fashion-statement .statement {
+        margin-top: 30%;
+        float: right;
+        color: white;
+    }
+
+    .fashion-statement .statement h1{
+        font-size: 33px;
+        padding-right: 10px;
+        padding-left: 10px;
+     }
+
+     .fashion-statement .statement .shopping {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        margin: 0 auto;
+     }
+     
+     .fashion-statement .statement p{
+         margin-top: 20px;
+         font-size: 15px;
+         max-width: 400px;
+         padding-right: 10px;
+         padding-left: 10px;
+     }
+}
