@@ -32,6 +32,8 @@
     "react"
   ],
   "rules": {
+    "jsx-a11y/label-has-for":0,
+    "react/jsx-filename-extension":0,
     "no-nested-ternary": 0,
     "one-var": 0,
     "one-var-declaration-per-line": 0,
