@@ -1,0 +1,27 @@
+[{
+  "language": "English",
+  "i18n": "en",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "Example Payment",
+          "walletPaymentProviderTitle": "Example Payment"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "Example Payment",
+          "walletPaymentProviderTitle": "Example Payment",
+          "walletPaymentProviderDescription": "Example Payment Method"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "Example Provider",
+          "walletPaymentSettingsLabel": "Example Payment",
+          "walletCredentials": "This is an wallet payment method setting.",
+          "apiClientId": "API Client ID",
+          "supportedMethodsLabel": "Payment provider supported methods"
+        }
+      }
+    }
+  }
+}]

@@ -1,56 +1,29 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import {
+  SimpleSchema
+} from 'meteor/aldeed:simple-schema';
+import {
+  PackageConfig
+} from '/lib/collections/schemas/registry';
+import {
+  registerSchema
+} from '@reactioncommerce/reaction-collections';
 
-/**
- * Transaction Schema
- */
-
-export const Transaction = new SimpleSchema({
-  amount: {
-    type: Number,
-    decimal: true,
-    label: 'Amount'
-  },
-  referenceId: {
-    type: String,
-    optional: true
-  },
-  transactionType: {
-    type: String
-  },
-  from: {
-    type: String,
-    optional: true
-  },
-  to: {
-    type: String,
-    optional: true
-  },
-  orderId: {
-    type: String,
-    optional: true
-  },
-  date: {
-    type: Date
+export const WalletPackageConfig = new SimpleSchema([
+  PackageConfig, {
+    'settings.mode': {
+      type: Boolean,
+      defaultValue: true
+    },
+    'settings.apiKey': {
+      type: String,
+      label: 'API Key',
+      optional: true
+    }
   }
-});
+]);
 
-/**
- * Wallet Schema
- */
+registerSchema('WalletPackageConfig', WalletPackageConfig);
 
-export const Wallet = new SimpleSchema({
-  userId: {
-    type: String,
-    label: 'User'
-  },
-  transactions: {
-    type: [Transaction],
-    optional: true
-  },
-  balance: {
-    type: Number,
-    decimal: true,
-    defaultValue: 0,
-    optional: true
-  }
-});
+export const WalletPayment = new SimpleSchema({});
+
+registerSchema('WalletPayment', WalletPayment);

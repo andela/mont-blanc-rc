@@ -1,0 +1,27 @@
+[{
+  "language": "Croatian",
+  "i18n": "hr",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "Primjer plaćanja",
+          "walletPaymentProviderTitle": "Primjer plaćanja"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "Primjer plaćanja",
+          "walletPaymentProviderTitle": "Primjer plaćanja",
+          "walletPaymentProviderDescription": "Primjer Način plaćanja"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "Primjer Provider",
+          "walletPaymentSettingsLabel": "Primjer plaćanja",
+          "walletCredentials": "To je postavka primjer načina plaćanja.",
+          "apiClientId": "ID API klijenta",
+          "supportedMethodsLabel": "Metode plaćanja pružatelja usluga plaćanja"
+        }
+      }
+    }
+  }
+}]

@@ -1,0 +1,27 @@
+[{
+  "language": "Vietnamese",
+  "i18n": "vi",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "Ví dụ thanh toán",
+          "walletPaymentProviderTitle": "Ví dụ thanh toán"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "Ví dụ thanh toán",
+          "walletPaymentProviderTitle": "Ví dụ thanh toán",
+          "walletPaymentProviderDescription": "Phương thức thanh toán Ví dụ"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "Nhà cung cấp ví dụ",
+          "walletPaymentSettingsLabel": "Ví dụ thanh toán",
+          "walletCredentials": "Đây là cài đặt phương thức thanh toán ví dụ.",
+          "apiClientId": "ID Client API",
+          "supportedMethodsLabel": "Phương thức hỗ trợ nhà cung cấp thanh toán"
+        }
+      }
+    }
+  }
+}]

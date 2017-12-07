@@ -1,0 +1,27 @@
+[{
+  "language": "Dutch",
+  "i18n": "nl",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "voorbeeld Betaling",
+          "walletPaymentProviderTitle": "voorbeeld Betaling"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "voorbeeld Betaling",
+          "walletPaymentProviderTitle": "voorbeeld Betaling",
+          "walletPaymentProviderDescription": "Voorbeeld Payment Method"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "voorbeeld Provider",
+          "walletPaymentSettingsLabel": "voorbeeld Betaling",
+          "walletCredentials": "Dit is een voorbeeld betaalmethode setting.",
+          "apiClientId": "API Client ID",
+          "supportedMethodsLabel": "Betaalmethoden ondersteunde methoden"
+        }
+      }
+    }
+  }
+}]

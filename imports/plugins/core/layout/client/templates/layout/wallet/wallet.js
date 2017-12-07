@@ -1,7 +1,14 @@
 import alert from 'sweetalert2';
-import { Meteor } from 'meteor/meteor';
-import { Template } from 'meteor/templating';
-import { Accounts, Wallets } from '/lib/collections';
+import {
+  Meteor
+} from 'meteor/meteor';
+import {
+  Template
+} from 'meteor/templating';
+import {
+  Accounts,
+  Wallets
+} from '/lib/collections';
 import verifyPayment from './verifyPayment';
 
 let paystackKeys = {};
@@ -24,7 +31,9 @@ const getNumberOfPages = () => {
  * @param {void} null
  */
 const makeList = () => {
-  const { transactions } = Template.instance().state.get('details');
+  const {
+    transactions
+  } = Template.instance().state.get('details');
   if (transactions.length > 0) {
     const newTranscationDetails = transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
     Template.instance().state.set('transactionsList', newTranscationDetails);
@@ -35,7 +44,10 @@ const makeList = () => {
 Template.wallet.onCreated(function bodyOnCreated() {
   this.state = new ReactiveDict();
   this.state.setDefault({
-    details: { balance: 0, transactions: [] },
+    details: {
+      balance: 0,
+      transactions: []
+    },
     transactions: [],
     transactionsList: [],
     currentPageNum: 1

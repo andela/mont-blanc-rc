@@ -1,0 +1,27 @@
+[{
+  "language": "Arabic",
+  "i18n": "ar",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "مثال الدفع",
+          "walletPaymentProviderTitle": "مثال الدفع"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "مثال الدفع",
+          "walletPaymentProviderTitle": "مثال الدفع",
+          "walletPaymentProviderDescription": "مثال طريقة الدفع"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "مزود سبيل المثال",
+          "walletPaymentSettingsLabel": "مثال الدفع",
+          "walletCredentials": "هذا هو إعداد سبيل المثال طريقة الدفع.",
+          "apiClientId": "معرف العميل API",
+          "supportedMethodsLabel": "طرق دعم مزود الدفع"
+        }
+      }
+    }
+  }
+}]

@@ -1,0 +1,27 @@
+[{
+  "language": "Bulgarian",
+  "i18n": "bg",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "Пример плащане",
+          "walletPaymentProviderTitle": "Пример плащане"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "Пример плащане",
+          "walletPaymentProviderTitle": "Пример плащане",
+          "walletPaymentProviderDescription": "Пример Начин на плащане"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "Пример Provider",
+          "walletPaymentSettingsLabel": "Пример плащане",
+          "walletCredentials": "Това е настройка за пример начина на плащане.",
+          "apiClientId": "API Client ID",
+          "supportedMethodsLabel": "Методи, поддържани от доставчика на плащания"
+        }
+      }
+    }
+  }
+}]

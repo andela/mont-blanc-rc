@@ -1,2 +1,2 @@
-import './templates/wallet.html';
-
+import './checkout/wallet';
+import './settings/templates/wallet';

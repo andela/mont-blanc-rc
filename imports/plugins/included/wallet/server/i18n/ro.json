@@ -1,0 +1,27 @@
+[{
+  "language": "Romanian",
+  "i18n": "ro",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "Exemplul de plată",
+          "walletPaymentProviderTitle": "Exemplul de plată"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "Exemplul de plată",
+          "walletPaymentProviderTitle": "Exemplul de plată",
+          "walletPaymentProviderDescription": "Exemplul Metoda de plată"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "Exemplul Provider",
+          "walletPaymentSettingsLabel": "Exemplul de plată",
+          "walletCredentials": "Aceasta este o setare exemplu metodă de plată.",
+          "apiClientId": "ID-ul client API",
+          "supportedMethodsLabel": "Metode acceptate de furnizor de plăți"
+        }
+      }
+    }
+  }
+}]
