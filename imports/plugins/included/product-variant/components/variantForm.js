@@ -409,10 +409,10 @@ class VariantForm extends Component {
             <div className="row">
               <div className="col-sm-6">
                 <Components.TextField
-                  i18nKeyLabel="productVariant.price"
+                  i18nKeyLabel="productVariant.sellingPrice"
                   i18nKeyPlaceholder={formatPriceString("0.00")}
                   placeholder={formatPriceString("0.00")}
-                  label="Price"
+                  label="Selling Price"
                   name="price"
                   ref="priceInput"
                   value={this.variant.price}
@@ -439,6 +439,19 @@ class VariantForm extends Component {
                   validation={this.props.validation}
                 />
               </div>
+              <Components.TextField
+                i18nKeyLabel="productVariant.costPrice"
+                i18nKeyPlaceholder={formatPriceString("0.00")}
+                placeholder={formatPriceString("0.00")}
+                label="Cost Price"
+                name="costPrice"
+                ref="costPrice"
+                value={this.variant.costPrice}
+                onBlur={this.handleFieldBlur}
+                onChange={this.handleFieldChange}
+                onReturnKeyDown={this.handleFieldBlur}
+                validation={this.props.validation}
+              />
             </div>
             <Components.Divider />
             <div className="row">
