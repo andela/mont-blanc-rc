@@ -6,7 +6,7 @@ import { Reaction } from "/client/api";
 import { TextField, Button, IconButton, SortableTableLegacy } from "@reactioncommerce/reaction-ui";
 import ProductGridContainer from "/imports/plugins/included/product-variant/containers/productGridContainer";
 import { accountsTable } from "../helpers";
-
+import { Components } from "@reactioncommerce/reaction-components";
 
 class SearchModal extends Component {
   static propTypes = {
@@ -28,7 +28,8 @@ class SearchModal extends Component {
     categories: [],
     nonDigitalProductArray: [],
     digitalProductArray: [],
-    productsArray: []
+    productsArray: [],
+    searchRequested: false
   }
 
   componentDidMount() {
@@ -52,8 +53,14 @@ class SearchModal extends Component {
   componentWillReceiveProps(nextProps) {
     // Update productsArray when there's search update
     this.setState({
-      productsArray: nextProps.products
+      productsArray: nextProps.products,
+      searchRequested: true
     });
+  }
+  componentWillUnmount() {
+    this.setState({
+      searchRequested: false
+    })
   }
   // it listens to onchange event on product type select
   productTypeChange = (event) => {
@@ -84,7 +91,7 @@ class SearchModal extends Component {
     }
   };
   // sort products by price and date
-  productSortChange =(event) => {
+  productSortChange = (event) => {
     // check if sorted product array is to be reversed
     let validityCheck = false;
     const sortTypeArray = ["price", "price", "updatedAt", "updatedAt"];
@@ -224,7 +231,7 @@ class SearchModal extends Component {
           {this.renderSearchInput()}
           {this.renderSearchTypeToggle()}
           {this.props.tags.length > 0 && this.renderProductSearchTags()}
-        </div> <br/>
+        </div> <br />
         <div style={{ display: this.props.displayFilter }} className="row filtersort col-lg-12">
           {this.renderProductTypeFilter()}
           {this.renderProductCategoryFilter()}
@@ -237,6 +244,19 @@ class SearchModal extends Component {
               unmountMe={this.props.unmountMe}
               isSearch={true}
             />
+          }
+          {
+            this.state.productsArray.length === 0
+            &&
+            this.state.searchRequested
+            &&
+            <div>
+              <Components.NotFound
+                i18nKeyTitle="order.notFound"
+                icon="fa fa-frown-o"
+                title=" No Search Result"
+              />
+            </div>
           }
           {this.props.accounts.length > 0 &&
             <div className="data-table">
