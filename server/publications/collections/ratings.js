@@ -1,6 +1,6 @@
-import { Meteor } from "meteor/meteor";
-import * as Collections from "/lib/collections";
-import { check } from "meteor/check";
+import { Meteor } from 'meteor/meteor';
+import * as Collections from '/lib/collections';
+import { check } from 'meteor/check';
 
 /**
  * Methods
@@ -8,20 +8,24 @@ import { check } from "meteor/check";
  */
 
 Meteor.methods({
-  saveRatings: function (userObject) {
+  // Save ratings
+  saveRatings: (userObject) => {
     check(userObject, Object);
     userObject.userId = Meteor.userId();
     Collections.Ratings.insert(userObject);
     return Collections.Ratings.find({ productId: userObject.productId }).fetch();
   },
-  fetchRatings: function (id) {
+  // Fetch ratings
+  fetchRatings: (id) => {
     check(id, String);
     return Collections.Ratings.find({ productId: id }).fetch();
   },
-  fetchOrders: function (productId) {
+  // Fetch orders based on specified condition
+  fetchOrders: (productId) => {
     check(productId, String);
     const fetchedResult = Collections.Orders.find({ userId: Meteor.userId() }).fetch();
     return fetchedResult;
   }
+
 });
 
