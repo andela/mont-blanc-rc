@@ -163,6 +163,10 @@ AutoForm.addHooks('wallet-payment-form', {
       showCancelButton: true,
     }, () => {
       Meteor.call('wallet/getWalletDetails', (walletError, walletResponse) => {
+        if (walletResponse.length === 0) {
+          Alerts.toast('You have insufficient balance in your wallet');
+          return uiEnd(template, 'Checkout with Wallet');
+        }
         const walletBalance = walletResponse[0].balance;
         if (orderTotal > walletBalance) {
           uiEnd(template, 'Checkout with Wallet');

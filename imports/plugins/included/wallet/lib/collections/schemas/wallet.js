@@ -27,3 +27,5 @@ registerSchema('WalletPackageConfig', WalletPackageConfig);
 export const WalletPayment = new SimpleSchema({});
 
 registerSchema('WalletPayment', WalletPayment);
+
+
