@@ -96,3 +96,4 @@ johanbrook:publication-collector
 # Custom Packages
 simple:rest
 nimble:restivus
+teamon:tinymce
