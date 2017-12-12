@@ -73,7 +73,7 @@ ongoworks:security
 raix:ui-dropped-event
 tmeasday:publish-counts
 vsivsi:job-collection@=1.4.0
-react-meteor-data@=0.2.9
+react-meteor-data
 percolate:migrations
 gadicc:blaze-react-component
 
@@ -97,3 +97,4 @@ johanbrook:publication-collector
 simple:rest
 nimble:restivus
 teamon:tinymce
+babel-runtime
