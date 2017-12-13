@@ -1,25 +1,28 @@
 import React from 'react';
 import { registerComponent } from '@reactioncommerce/reaction-components';
-import { SimpleChart } from './charts/saleschart';
-import { Chart } from './charts/customerCount';
+import { SimpleChart } from './charts/SimpleChart';
 import { SelectOption, DisplayOption } from '../components/selectOption/option';
 
 
 export const ProductStat = (props) => {
   const {
-    salesData, handleChartChange, displayBar, displayPie, handleOptionChange, customerDisplayBar, customerDisplayPie
+    salesData, handleChartChange, displayBar, displayPie, handleOptionChange, statValue
   } = props;
   return (
     <div id="tab4" className="col-sm-12 col-md-12 col-lg-10 col-lg-offset-1 tab-pane fade">
       <div className="card container" />
-      <div className="col-md-4 col-md-offset-2">
+      <div className="row">
         <DisplayOption
           handleOptionChange={handleOptionChange}
-          firstValue="sales"
-          secondValue="customer"
-          firstOption="Product sales"
-          secondOption="Customer count"
-          chartClass="col-md-6 col-md-offset-1"
+          firstValue="quantitySold"
+          secondValue="customerCount"
+          thirdValue="totalSales"
+          fourthValue="averageSalesPerDay"
+          firstOption="Quantity Sold"
+          secondOption="Customer Count"
+          thirdOption="Total Sales"
+          fourthOption="Average Sales"
+          chartClass="col-md-4 col-md-offset-3"
         />
         <SelectOption
           handleChartChange={handleChartChange}
@@ -27,22 +30,16 @@ export const ProductStat = (props) => {
           secondValue="Pie"
           firstOption="Bar chart"
           secondOption="Pie chart"
-          chartClass="col-md-6 col-md-offset-1"
+          chartClass="col-md-4"
         />
       </div>
       <SimpleChart
-        displayBar={displayBar}
-        displayPie={displayPie}
         fetchedData={salesData}
-      />
-      <Chart
-        customerDisplayBar={customerDisplayBar}
-        customerDisplayPie={customerDisplayPie}
-        fetchedData={salesData}
+        statValue={statValue}
       />
     </div>
   );
 };
-registerComponent('TopSalesReport', ProductStat);
+registerComponent('ProductStat', ProductStat);
 
 export default ProductStat;

@@ -30,8 +30,8 @@ export class Report extends React.Component {
     super(props)
 
     this.state = {
-      value:'',
-      statValue:'',
+      value: '',
+      statValue: 'quantitySold',
       ordersPlaced: 0,
       ordersData: [],
       beforeDate: new Date(),
@@ -51,10 +51,6 @@ export class Report extends React.Component {
       productInventoryData: [],
       productSearchTerm: '',
       headingText: 'Retail DashBoard',
-      displayBar: 'block',
-      displayPie: 'none',
-      customerDisplayBar: 'none',
-      customerDisplayPie: 'none'
     };
   }
 
@@ -171,48 +167,16 @@ export class Report extends React.Component {
   }
 
   handleChartChange = (event) => {
-   this.setState({
-     value: event.target.value
-   });
-   if ((event.target.value.toString() === 'Bar') && (this.state.statValue === 'sales')) {
-     this.setState({
-       displayBar: 'block',
-       displayPie: 'none',
-       customerDisplayBar: 'none',
-       customerDisplayPie: 'none'
-     })
-   }
-   else if ((event.target.value.toString() === 'Pie') && (this.state.statValue === 'sales')) {
     this.setState({
-      displayPie: 'block',
-      displayBar: 'none',
-      customerDisplayBar: 'none',
-      customerDisplayPie: 'none'
-    })
-   }
-   else if ((event.target.value.toString() === 'Bar') && (this.state.statValue === 'customer')) {
-    this.setState({
-      displayPie: 'none',
-      displayBar: 'none',
-      customerDisplayBar: 'block',
-      customerDisplayPie: 'none'
-    })
-   }
-   else if ((event.target.value.toString() === 'Pie') && (this.state.statValue === 'customer')) {
-    this.setState({
-      displayPie: 'none',
-      displayBar: 'none',
-      customerDisplayBar: 'none',
-      customerDisplayPie: 'block'
-    })
-   }
+      value: event.target.value
+    });
   }
 
   handleOptionChange = (event) => {
     this.setState({
       statValue: event.target.value
     })
-   }
+  }
 
   handleInventoryInputChange = (event) => {
     this.getProductInventoryData(event.target.value);
@@ -262,16 +226,12 @@ export class Report extends React.Component {
           productInventoryData={this.state.productInventoryData}
           handleInventoryInputChange={this.handleInventoryInputChange}
         />
-        <ProductStat 
+        <ProductStat
           salesData={this.state.analytics}
-          handleChartChange = {this.handleChartChange}
-          handleOptionChange = {this.handleOptionChange}
-          statValue = {this.state.statValue}
+          handleChartChange={this.handleChartChange}
+          handleOptionChange={this.handleOptionChange}
+          statValue={this.state.statValue}
           value={this.state.value}
-          displayBar={this.state.displayBar}
-          displayPie= {this.state.displayPie}
-          customerDisplayPie= {this.state.customerDisplayPie}
-          customerDisplayBar= {this.state.customerDisplayBar}
         />
       </div>
     );
