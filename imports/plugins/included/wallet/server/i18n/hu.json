@@ -1,0 +1,27 @@
+[{
+  "language": "Hungarian",
+  "i18n": "hu",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "példa Fizetési",
+          "walletPaymentProviderTitle": "példa Fizetési"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "példa Fizetési",
+          "walletPaymentProviderTitle": "példa Fizetési",
+          "walletPaymentProviderDescription": "Példa Fizetési mód"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "példa Szolgáltató",
+          "walletPaymentSettingsLabel": "példa Fizetési",
+          "walletCredentials": "Ez egy példa a fizetési módszer beállítást.",
+          "apiClientId": "API ügyfél azonosító",
+          "supportedMethodsLabel": "Fizetés szolgáltatója támogatott módszerekkel"
+        }
+      }
+    }
+  }
+}]

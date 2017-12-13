@@ -1,0 +1,26 @@
+[{
+  "language": "Hebrew",
+  "i18n": "he",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "תשלום לדוגמה",
+          "walletPaymentProviderTitle": "תשלום לדוגמה"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "תשלום לדוגמה",
+          "walletPaymentProviderTitle": "תשלום לדוגמה",
+          "walletPaymentProviderDescription": "שיטת תשלום לדוגמה"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "ספק לדוגמה",
+          "walletPaymentSettingsLabel": "תשלום לדוגמה",
+          "walletCredentials": "זוהי הגדרה של שיטת תשלום לדוגמה.",
+          "apiClientId": "מזהה לקוח API"
+        }
+      }
+    }
+  }
+}]

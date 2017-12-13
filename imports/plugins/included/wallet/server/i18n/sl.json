@@ -1,0 +1,27 @@
+[{
+  "language": "Slovenian",
+  "i18n": "sl",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "Primer plačila",
+          "walletPaymentProviderTitle": "Primer plačila"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "Primer plačila",
+          "walletPaymentProviderTitle": "Primer plačila",
+          "walletPaymentProviderDescription": "Primer Način plačila"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "Ponudnik Primer",
+          "walletPaymentSettingsLabel": "Primer plačila",
+          "walletCredentials": "To je nastavitev metoda plačila primer.",
+          "apiClientId": "API ID odjemalca",
+          "supportedMethodsLabel": "ponudnik plačilnih podprte metode"
+        }
+      }
+    }
+  }
+}]
