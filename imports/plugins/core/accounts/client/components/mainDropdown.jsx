@@ -74,6 +74,19 @@ class MainDropdown extends Component {
     );
   }
 
+  renderWallet() {
+    return (
+      <a
+        className="rui menu-item accounts-a-tag wallet-link-tag"
+        type="button"
+        href="/wallet"
+      >
+        <i className="rui font-icon fa fa-credit-card" style={iconStyle}></i>
+        <span>Wallet</span>
+      </a>
+    );
+  }
+
   renderSignOutButton() {
     return (
       <Components.MenuItem
@@ -115,6 +128,7 @@ class MainDropdown extends Component {
             >
               {this.renderUserIcons()}
               {this.renderAdminIcons()}
+              {this.renderWallet()}
               {this.renderSignOutButton()}
             </Components.DropDownMenu>
           </div>

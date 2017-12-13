@@ -33,6 +33,7 @@
     "react"
   ],
   "rules": {
+    "jsx-a11y/label-has-for": 0,
     "import/no-absolute-path": 0,
     "import/extensions": 0,
     "import/first": 0,

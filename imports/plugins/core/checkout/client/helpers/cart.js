@@ -1,5 +1,5 @@
-import { Cart } from "/lib/collections";
-import { Template } from "meteor/templating";
+import { Cart, Accounts } from '/lib/collections';
+import { Template } from 'meteor/templating';
 
 /*
  * Template helpers for cart
@@ -17,7 +17,7 @@ import { Template } from "meteor/templating";
  * in code: Cart.findOne().getTotal()
  * @return {Object} returns inventory helpers
  */
-Template.registerHelper("cart", function () {
+Template.registerHelper('cart', () => {
   const cartHelpers = {
     /**
      * showCartIconWarning
@@ -71,10 +71,16 @@ Template.registerHelper("cart", function () {
  * @summary gets current cart billing address / payment name
  * @return {String} returns cart.billing[0].fullName
  */
-Template.registerHelper("cartPayerName", function () {
+Template.registerHelper('cartPayerName', () => {
   const cart = Cart.findOne();
   if (cart && cart.billing && cart.billing[0] && cart.billing[0].address && cart.billing[0].address.fullName) {
     const name = cart.billing[0].address.fullName;
-    if (name.replace(/[a-zA-Z ]*/, "").length === 0) return name;
+    if (name.replace(/[a-zA-Z ]*/, '').length === 0) return name;
   }
+});
+
+Template.registerHelper('payerEmail', () => {
+  const accounts = Accounts.findOne();
+  const email = accounts.emails[0].address;
+  return email;
 });

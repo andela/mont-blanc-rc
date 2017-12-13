@@ -1,0 +1,27 @@
+[{
+  "language": "Greek",
+  "i18n": "el",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "παράδειγμα πληρωμής",
+          "walletPaymentProviderTitle": "παράδειγμα πληρωμής"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "παράδειγμα πληρωμής",
+          "walletPaymentProviderTitle": "παράδειγμα πληρωμής",
+          "walletPaymentProviderDescription": "Παράδειγμα Μέθοδος Πληρωμής"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "παράδειγμα Provider",
+          "walletPaymentSettingsLabel": "παράδειγμα πληρωμής",
+          "walletCredentials": "Αυτή είναι μια ρύθμιση παράδειγμα τη μέθοδο πληρωμής.",
+          "apiClientId": "API ID πελάτη",
+          "supportedMethodsLabel": "Οι μέθοδοι υποστήριξης του παρόχου πληρωμών"
+        }
+      }
+    }
+  }
+}]

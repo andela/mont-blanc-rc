@@ -1,0 +1,27 @@
+[{
+  "language": "Chinese",
+  "i18n": "zh",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "例如付款",
+          "walletPaymentProviderTitle": "例如付款"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "例如付款",
+          "walletPaymentProviderTitle": "例如付款",
+          "walletPaymentProviderDescription": "例如付款方法"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "例如供应商",
+          "walletPaymentSettingsLabel": "例如付款",
+          "walletCredentials": "这是一个例子付款方式设置。",
+          "apiClientId": "API客户端ID",
+          "supportedMethodsLabel": "付款提供商支持的方法"
+        }
+      }
+    }
+  }
+}]
