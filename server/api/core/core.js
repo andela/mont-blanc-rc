@@ -70,8 +70,8 @@ export default {
 
   defaultCustomerRoles: [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "static-page-view","category", "uiproducts", "wallet"],
   defaultVisitorRoles: ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "static-page-view", "category", "uiproducts"],
-
   createGroups,
+  
   /**
    * canInviteToGroup
    * @summary checks if the user making the request is allowed to make invitation to that group
