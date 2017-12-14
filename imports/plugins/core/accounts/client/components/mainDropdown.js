@@ -11,6 +11,18 @@ const iconStyle = {
   textAlign: "center"
 };
 
+const analyticsLinkStyle = {
+  backgroundColor: "white",
+  color: "black"
+};
+
+const analyticsIconStyle = {
+  margin: "10px 10px 10px -13px",
+  width: "20px",
+  fontSize: "inherit",
+  textAlign: "center"
+};
+
 const menuStyle = {
   padding: "0px 10px 10px 10px",
   minWidth: 220,
@@ -18,6 +30,13 @@ const menuStyle = {
 };
 
 class MainDropdown extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      isAdmin: false
+    }
+  }
   static propTypes = {
     adminShortcuts: PropTypes.object,
     currentAccount: PropTypes.oneOfType(
@@ -27,6 +46,12 @@ class MainDropdown extends Component {
     userImage: PropTypes.object,
     userName: PropTypes.string,
     userShortcuts: PropTypes.object
+  }
+
+  componentDidMount() {
+    this.setState({
+      isAdmin: Reaction.hasPermission("admin")
+    })
   }
 
   buttonElement() {
@@ -112,6 +137,28 @@ class MainDropdown extends Component {
       </div>
     );
   }
+  renderAnalytics() {
+    if (this.state.isAdmin) {
+      return (
+        <a className="rui menu-item"
+          style={analyticsLinkStyle}
+          type="button"
+          href="/dashboard/analytics">
+          <i className="rui font-icon fa fa-bar-chart" style={analyticsIconStyle}></i>
+          <span>Analytics</span>
+        </a>
+      )
+    } else if (!this.state.isAdmin) {
+      return (
+        <a className="rui menu-item"
+          style={analyticsLinkStyle}
+          href="/dashboard/analytic"></a>
+      )
+    }
+  }
+
+
+
 
   render() {
     return (
@@ -126,6 +173,7 @@ class MainDropdown extends Component {
               className="accounts-li-tag"
               onChange={this.props.handleChange}
             >
+              {this.renderAnalytics()}
               {this.renderUserIcons()}
               {this.renderAdminIcons()}
               {this.renderWallet()}
