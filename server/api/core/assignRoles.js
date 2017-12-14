@@ -18,12 +18,12 @@ function getRouteName(packageName, registryItem) {
   if (packageName && registryItem) {
     if (registryItem.name) {
       routeName = registryItem.name;
-    } else if (registryItem.template) {
       routeName = `${packageName}/${registryItem.template}`;
     } else {
       routeName = `${packageName}`;
     }
-    // dont include params in the name
+    // dont include params in the name    } else if (registryItem.template) {
+
     routeName = routeName.split(":")[0];
     return routeName;
   }

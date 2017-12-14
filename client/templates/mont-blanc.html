@@ -1,0 +1,23 @@
+<template name="montBlanc">
+  <main role="main" id="main"> 
+    {{#if hasDashboardAccess}}
+    <div>
+        {{> products}}
+    </div>
+    {{else}}
+      <div>
+        {{> indexCarousel}}
+        <div class="container">
+          <div class="row featured">
+            <h1>Featured Products</h1>
+              {{> featuredProducts}}
+          </div>
+        </div>
+        {{> startShopping}}
+        {{> productCategory}}
+        {{> digitalProducts}}
+        {{> layoutFooter}}
+    </div>
+      {{/if}}
+  </main>
+  </template>

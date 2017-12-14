@@ -1,0 +1,245 @@
+<template name="productCategory">
+    <div class="container clothingSamples">
+        <div class="row">
+          <div class="item">
+              <h1>Browse by category</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="productList">
+            <!-- Corporate -->
+              <div class="product">
+                <div id="corporate">
+                  <img src="/resources/corporate.jpeg" alt=""/>
+                  <div id="corporates-holder">
+                    <button value="Corporates" id="corporate-text">Corporates</button>
+                  </div>
+                </div>
+              </div>
+    
+            <!-- Casuals -->
+              <div class="product">
+                <div id="corporate">
+                  <img src="/resources/casuals.jpeg" alt=""/>
+                  <div id="casuals-holder">
+                    <button id="casuals-text" value="Casuals">Casuals/Accessories</button>
+                  </div>
+                </div>
+              </div>
+    
+            <!-- Accessories -->
+              <div class="product">
+                <div id="corporate">
+                  <img src="/resources/digital.jpg" alt=""/>
+                  <div id="others-holder">
+                    <button class="others-text" value="Digital Products">Digital Products</button>
+                  </div>
+                </div>
+              </div>
+    
+              <!-- OTHER SECTIONS -->
+              <!-- Office equipments -->
+              <div class="product">
+                  <div id="corporate">
+                    <img src="/resources/kids.jpg" alt=""/>
+                    <div id="kids-holder">
+                      <button id="kids-text" value="Kids Fashion">Kids Fashion</button>
+                    </div>
+                  </div>
+                </div>
+      
+              <!-- Home appliances -->
+                <div class="product">
+                  <div id="corporate">
+                    <img src="/resources/homeAppliances.jpg" alt=""/>
+                    <div id="home-holder">
+                      <button id="home-text" value="Home Appliances">Home Appliances</button>
+                    </div>
+                  </div>
+                </div>
+      
+              <!-- Games -->
+                <div class="product">
+                  <div id="corporate">
+                    <img src="/resources/games.jpg" alt=""/>
+                    <div id="game-holder">
+                      <button class="game-text" value="Games and Accessories">Games/Accessories</button>
+                    </div>
+                  </div>
+                </div>
+          </div>
+        </div>
+      </div>
+      <script type="text/javascript">
+        var $ = jQuery.noConflict(); $(document).ready(() => {
+
+          // ON MOUSE ENTER
+          $('#corporates-holder').on('mouseenter',() => {
+              $('#corporates-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.5)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#corporate-text').css({
+                  'font-size': '32px',
+                  'transition': 'font-size 1s'
+              });
+          });
+
+          // ON MOUSE LEAVE
+          $('#corporates-holder').on('mouseleave',() => {
+              $('#corporates-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.2)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#corporate-text').css({
+                  'font-size': '30px',
+                  'transition': 'font-size 1s'
+              });
+          })
+
+
+          // CASUALS
+
+          // ON MOUSE ENTER
+          $('#casuals-holder').on('mouseenter',() => {
+              $('#casuals-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.5)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#casuals-text').css({
+                  'font-size': '32px',
+                  'transition': 'font-size 1s'
+              });
+          });
+
+          // ON MOUSE LEAVE
+          $('#casuals-holder').on('mouseleave',() => {
+              $('#casuals-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.2)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#causals-text').css({
+                  'font-size': '30px',
+                  'transition': 'font-size 1s'
+              });
+          })
+
+          // OTHERS
+
+          // ON MOUSE ENTER
+          $('#others-holder').on('mouseenter',() => {
+              $('#others-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.5)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#others-text').css({
+                  'font-size': '32px',
+                  'transition': 'font-size 1s'
+              });
+          });
+
+          // ON MOUSE LEAVE
+          $('#others-holder').on('mouseleave',() => {
+              $('#others-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.2)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#others-text').css({
+                  'font-size': '30px',
+                  'transition': 'font-size 1s'
+              });
+          })
+
+
+          // Kids
+
+          // ON MOUSE ENTER
+          $('#kids-holder').on('mouseenter',() => {
+              $('#kids-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.5)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#kids-text').css({
+                  'font-size': '32px',
+                  'transition': 'font-size 1s'
+              });
+          });
+
+          // ON MOUSE LEAVE
+          $('#kids-holder').on('mouseleave',() => {
+              $('#kids-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.2)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#kids-text').css({
+                  'font-size': '30px',
+                  'transition': 'font-size 1s'
+              });
+          })
+
+          // game
+
+          // ON MOUSE ENTER
+          $('#game-holder').on('mouseenter',() => {
+              $('#game-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.5)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#game-text').css({
+                  'font-size': '32px',
+                  'transition': 'font-size 1s'
+              });
+          });
+
+          // ON MOUSE LEAVE
+          $('#game-holder').on('mouseleave',() => {
+              $('#game-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.2)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#game-text').css({
+                  'font-size': '30px',
+                  'transition': 'font-size 1s'
+              });
+          })
+
+          // home
+
+          // ON MOUSE ENTER
+          $('#home-holder').on('mouseenter',() => {
+              $('#home-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.5)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#home-text').css({
+                  'font-size': '32px',
+                  'transition': 'font-size 1s'
+              });
+          });
+
+          // ON MOUSE LEAVE
+          $('#home-holder').on('mouseleave',() => {
+              $('#home-holder').css({
+                  'background-color': 'rgba(0, 0, 0, 0.2)',
+                  'transition': 'background-color 1s'
+              });
+
+              $('#home-text').css({
+                  'font-size': '30px',
+                  'transition': 'font-size 1s'
+              });
+          })
+      })
+      </script>
+</template>
