@@ -1,0 +1,27 @@
+[{
+  "language": "Russian",
+  "i18n": "ru",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "Пример оплаты",
+          "walletPaymentProviderTitle": "Пример оплаты"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "Пример оплаты",
+          "walletPaymentProviderTitle": "Пример оплаты",
+          "walletPaymentProviderDescription": "Пример Способ оплаты"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "Пример Провайдер",
+          "walletPaymentSettingsLabel": "Пример оплаты",
+          "walletCredentials": "Это установка пример способ оплаты.",
+          "apiClientId": "API идентификатор клиента",
+          "supportedMethodsLabel": "Поддерживаемые методы поставщика платежей"
+        }
+      }
+    }
+  }
+}]

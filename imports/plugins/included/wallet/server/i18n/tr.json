@@ -1,0 +1,27 @@
+[{
+  "language": "Turkish",
+  "i18n": "tr",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "Örnek Ödeme",
+          "walletPaymentProviderTitle": "Örnek Ödeme"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "Örnek Ödeme",
+          "walletPaymentProviderTitle": "Örnek Ödeme",
+          "walletPaymentProviderDescription": "Örnek Ödeme Yöntemi"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "Örnek Sağlayıcı",
+          "walletPaymentSettingsLabel": "Örnek Ödeme",
+          "walletCredentials": "Bu örnek bir ödeme yöntemi ayarıdır.",
+          "apiClientId": "API İstemci Kimliği",
+          "supportedMethodsLabel": "Ödeme sağlayıcısı tarafından desteklenen yöntemler"
+        }
+      }
+    }
+  }
+}]

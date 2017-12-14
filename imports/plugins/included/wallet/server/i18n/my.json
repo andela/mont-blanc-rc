@@ -1,0 +1,27 @@
+[{
+  "language": "Burmese",
+  "i18n": "my",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "ဥပမာအားငွေပေးချေမှုရမည့်",
+          "walletPaymentProviderTitle": "ဥပမာအားငွေပေးချေမှုရမည့်"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "ဥပမာအားငွေပေးချေမှုရမည့်",
+          "walletPaymentProviderTitle": "ဥပမာအားငွေပေးချေမှုရမည့်",
+          "walletPaymentProviderDescription": "ဥပမာအားငွေပေးချေမှုရမည့်နည်းလမ်း"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "ဥပမာအားပေးသူ",
+          "walletPaymentSettingsLabel": "ဥပမာအားငွေပေးချေမှုရမည့်",
+          "walletCredentials": "ဒါကဥပမာတစ်ခုပေးချေမှုနည်းလမ်း setting ကိုဖြစ်ပါတယ်။",
+          "apiClientId": "API ကိုလိုင်း ID ကို",
+          "supportedMethodsLabel": "ငွေပေးချေမှုရမည့်ပံ့ပိုးပေးနည်းလမ်းများကိုထောက်ခံ"
+        }
+      }
+    }
+  }
+}]
