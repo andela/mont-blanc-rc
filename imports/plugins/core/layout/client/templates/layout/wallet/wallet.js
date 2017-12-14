@@ -7,9 +7,11 @@ import {
 } from 'meteor/templating';
 import {
   Accounts,
-  Wallets
+  Wallets,
+  Shops
 } from '/lib/collections';
 import verifyPayment from './verifyPayment';
+import axios from 'axios';
 
 let paystackKeys = {};
 let list = [];
@@ -142,43 +144,18 @@ const finalizeDeposit = (paystackMethod) => {
 };
 
 /**
- * @returns {funct} handleDepositPayment
- * @param {void} result
+ *
+ * @param {String} rawAmount
+ * @param {String} exchangeRate
+ * @returns {String} exchangedAmount
  */
-const handleDepositPayment = (result) => {
-  const type = 'deposit';
-  const transactionRef = result.reference;
-  if (transactionRef) {
-    verifyPayment(transactionRef, paystackKeys.secretKey, (error, response) => {
-      if (error) {
-        Alerts.toast('Unable to verify payment', 'error');
-      } else if (response.data.status !== 'success') {
-        Alerts.toast('Payment was unsuccessful', 'error');
-      } else {
-        const paystackResponse = response.data;
-        const paystackMethod = {
-          processor: 'Paystack',
-          storedCard: paystackResponse.authorization.last4,
-          method: 'Paystack',
-          transactionId: paystackResponse.reference,
-          currency: paystackResponse.currency,
-          amount: parseInt(paystackResponse.amount, 10),
-          status: paystackResponse.status,
-          mode: 'authorize',
-          createdAt: new Date()
-        };
-        if (type === 'deposit') {
-          paystackMethod.transactions = {
-            amount: paystackResponse.amount / 100,
-            referenceId: paystackResponse.reference,
-            date: new Date(),
-            transactionType: 'Credit'
-          };
-          finalizeDeposit(paystackMethod);
-        }
-      }
-    });
+const loadAmount = (rawAmount, exchangeRate) => {
+  const nairaToKoboRate = 100;
+  let exchangedAmount = 0;
+  if (rawAmount) {
+    exchangedAmount = Math.round(rawAmount * exchangeRate * nairaToKoboRate);
   }
+  return exchangedAmount;
 };
 
 Template.wallet.events({
@@ -213,6 +190,9 @@ Template.wallet.events({
     const accountDetails = Accounts.find(Meteor.userId()).fetch();
     const userMail = accountDetails[0].emails[0].address;
     const amount = parseInt(document.getElementById('depositAmount').value, 10);
+    const {
+      currency
+    } = Shops.findOne();
     if (amount < 0) {
       Alerts.toast('Amount to deposit cannot be negative', 'error');
       return false;
@@ -228,13 +208,60 @@ Template.wallet.events({
         return false;
       }
       paystackKeys = keys;
-      const handler = PaystackPop.setup({
-        key: keys.publicKey,
-        email: userMail,
-        amount: amount * 100,
-        callback: handleDepositPayment
-      });
-      return handler.openIframe();
+      if (currency === 'USD') {
+        axios
+          .get(`http://www.apilayer.net/api/live?
+    access_key=8b26ed909838b9620281b02618f0a668&
+    format=1&
+    source=${currency}&
+    currencies=NGN`)
+          .then((rateResponse) => {
+            const exchangeRate = Math.round(rateResponse.data.quotes[`${currency}NGN`]);
+            const handler = PaystackPop.setup({
+              key: keys.publicKey,
+              email: userMail,
+              amount: loadAmount(Number(amount), exchangeRate),
+              callback: (result) => {
+                const type = 'deposit';
+                const transactionRef = result.reference;
+                if (transactionRef) {
+                  verifyPayment(transactionRef, paystackKeys.secretKey, (error, response) => {
+                    if (error) {
+                      Alerts.toast('Unable to verify payment', 'error');
+                    } else if (response.data.status !== 'success') {
+                      Alerts.toast('Payment was unsuccessful', 'error');
+                    } else {
+                      const paystackResponse = response.data;
+                      const paystackMethod = {
+                        processor: 'Paystack',
+                        storedCard: paystackResponse.authorization.last4,
+                        method: 'Paystack',
+                        transactionId: paystackResponse.reference,
+                        currency: paystackResponse.currency,
+                        amount,
+                        status: paystackResponse.status,
+                        mode: 'authorize',
+                        createdAt: new Date()
+                      };
+                      if (type === 'deposit') {
+                        paystackMethod.transactions = {
+                          amount,
+                          referenceId: paystackResponse.reference,
+                          date: new Date(),
+                          transactionType: 'Credit'
+                        };
+                        finalizeDeposit(paystackMethod);
+                      }
+                    }
+                  });
+                }
+              }
+            });
+            return handler.openIframe();
+          });
+      } else {
+        Alerts.toast('For Optimal performance, change the shop\'s currency to dollar, else contact the admin');
+      }
     });
   },
 
