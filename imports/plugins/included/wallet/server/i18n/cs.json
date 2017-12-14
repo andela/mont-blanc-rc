@@ -1,0 +1,27 @@
+[{
+  "language": "Czech",
+  "i18n": "cs",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "Příklad platba",
+          "walletPaymentProviderTitle": "Příklad platba"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "Příklad platba",
+          "walletPaymentProviderTitle": "Příklad platba",
+          "walletPaymentProviderDescription": "Příklad Způsob platby"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "Příklad Poskytovatel",
+          "walletPaymentSettingsLabel": "Příklad platba",
+          "walletCredentials": "Jedná se o nastavení příklad způsob platby.",
+          "apiClientId": "API ID klienta",
+          "supportedMethodsLabel": "Metody podporované poskytovatelem plateb"
+        }
+      }
+    }
+  }
+}]

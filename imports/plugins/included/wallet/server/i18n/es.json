@@ -1,0 +1,27 @@
+[{
+  "language": "Spanish",
+  "i18n": "es",
+  "ns": "wallet-paymentmethod",
+  "translation": {
+    "reaction-payments": {
+      "admin": {
+        "shortcut": {
+          "walletPaymentProviderLabel": "ejemplo de Pago",
+          "walletPaymentProviderTitle": "ejemplo de Pago"
+        },
+        "dashboard": {
+          "walletPaymentProviderLabel": "ejemplo de Pago",
+          "walletPaymentProviderTitle": "ejemplo de Pago",
+          "walletPaymentProviderDescription": "Ejemplo Forma de pago"
+        },
+        "paymentSettings": {
+          "walletPaymentLabel": "ejemplo de Proveedores",
+          "walletPaymentSettingsLabel": "ejemplo de Pago",
+          "walletCredentials": "Este es un ejemplo de confirmación de pago.",
+          "apiClientId": "API ID de cliente",
+          "supportedMethodsLabel": "Métodos soportados por proveedores de pago"
+        }
+      }
+    }
+  }
+}]
