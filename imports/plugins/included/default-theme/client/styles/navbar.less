@@ -1,8 +1,7 @@
-
 .rui.navbar {
   .display(flex);
   .align-items(center);
-  background-color: @navbar-default-bg;
+  background-color: #3399cc;
   color: @navbar-default-link-color;
   border-radius: 0;
   border: 0;
@@ -12,9 +11,29 @@
 .rui.navbar a:hover,
 .rui.navbar a:focus,
 .rui.navbar .dropdown-toggle {
-  color: @navbar-default-link-color;
+  color: white;
   cursor: pointer;
   text-decoration: none;
+}
+
+.rui.navbar .dropdown-toggle:hover {
+  color: black;
+}
+
+.languages div .dropdown-toggle button div {
+  color: white !important;
+}
+
+.languages div .dropdown-toggle button div:hover{
+  color: black !important;
+}
+
+.currencies div button div {
+  color: white !important;
+}
+
+.currencies div button div:hover {
+  color: black !important;
 }
 
 .rui.navbar .button {
@@ -48,6 +67,14 @@
   .tag-group {
     display: inherit
   }
+}
+
+.rui.navbar div.search button {
+  color: white 
+}
+
+.rui.navbar div.search button:hover {
+  color: black
 }
 
 .rui.navbar .rui.tagnav .edit-tag-button {
@@ -158,7 +185,7 @@ html:not(.rtl) .rui.navbar .languages .dropdown-menu {
 }
 
 .rui.navbar .accounts:hover {
-  background-color: @navbar-default-toggle-icon-bar-bg;
+  background-color: transparent;
   border-color: @navbar-default-toggle-border-color;
 }
 
@@ -273,7 +300,7 @@ html:not(.rtl) .rui.navbar .languages .dropdown-menu {
 }
 
 .rui.navbar .search:hover {
-  background-color: @navbar-default-toggle-icon-bar-bg;
+  background-color: transparent;
   border-color: @navbar-default-toggle-border-color;
 }
 
@@ -283,7 +310,7 @@ html:not(.rtl) .rui.navbar .languages .dropdown-menu {
 
 .rui.navbar .languages:hover,
 .rui.navbar .currencies:hover {
-  background-color: @navbar-default-toggle-icon-bar-bg;
+  background-color: transparent;
   border-color: @navbar-default-toggle-border-color;
 }
 
