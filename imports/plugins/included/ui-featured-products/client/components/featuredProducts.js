@@ -29,7 +29,7 @@ class FeaturedProducts extends Component {
    * @return {Boolean} Boolean value `true` if products are available, `false` otherwise.
    */
   get hasProducts() {
-    return Array.isArray(this.props.products) && this.props.products.length > 5;
+    return Array.isArray(this.props.products) && this.props.products.length > 0;
   }
 
   /**
