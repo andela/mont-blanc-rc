@@ -141,11 +141,13 @@ AutoForm.addHooks('paystack-payment-form', {
 
         if (currency === 'USD') {
           axios
-            .get(`http://www.apilayer.net/api/live?
+            .get(
+              `https://www.apilayer.net/api/live?
               access_key=8b26ed909838b9620281b02618f0a668&
               format=1&
               source=${currency}&
-              currencies=NGN`)
+              currencies=NGN`
+            )
             .then((rateResponse) => {
               const exchangeRate = Math.round(rateResponse.data.quotes[`${currency}NGN`]);
               /**
