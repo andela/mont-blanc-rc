@@ -22,14 +22,14 @@ class FeaturedProducts extends Component {
     productsSubscription: PropTypes.object,
     ready: PropTypes.func,
     showNotFound: PropTypes.bool
-  };    
+  };
 
   /**
    * Checks and returns a Boolean if the `products` array from props is not empty.
    * @return {Boolean} Boolean value `true` if products are available, `false` otherwise.
    */
   get hasProducts() {
-    return Array.isArray(this.props.products) && this.props.products.length > 5;
+    return Array.isArray(this.props.products) && this.props.products.length > 0;
   }
 
   /**
