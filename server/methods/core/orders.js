@@ -1,20 +1,37 @@
-import _ from "lodash";
-import path from "path";
-import moment from "moment";
-import accounting from "accounting-js";
-import Future from "fibers/future";
-import { Meteor } from "meteor/meteor";
-import { check, Match } from "meteor/check";
-import { SSR } from "meteor/meteorhacks:ssr";
-import { Media, Orders, Products, Shops, Packages } from "/lib/collections";
-import { Logger, Hooks, Reaction } from "/server/api";
+import _ from 'lodash';
+import path from 'path';
+import moment from 'moment';
+import accounting from 'accounting-js';
+import Future from 'fibers/future';
+import {
+  Meteor
+} from 'meteor/meteor';
+import {
+  check,
+  Match
+} from 'meteor/check';
+import {
+  SSR
+} from 'meteor/meteorhacks:ssr';
+import {
+  Media,
+  Orders,
+  Products,
+  Shops,
+  Packages
+} from '/lib/collections';
+import {
+  Logger,
+  Hooks,
+  Reaction
+} from '/server/api';
 
 /**
  * @file Methods for Orders.
  *
  *
  * @namespace Methods/Orders
-*/
+ */
 
 /**
  * @name orderCreditMethod
@@ -26,10 +43,9 @@ import { Logger, Hooks, Reaction } from "/server/api";
  * @return {Object} returns entire payment method
  */
 export function orderCreditMethod(order) {
-  const creditBillingRecords = order.billing.filter(value => value.paymentMethod.method ===  "credit");
-  const billingRecord = creditBillingRecords.find((billing) => {
-    return billing.shopId === Reaction.getShopId();
-  });
+  const creditBillingRecords = order.billing.filter(value => value.paymentMethod.method === 'credit');
+  const billingRecord = creditBillingRecords
+    .find(billing => billing.shopId === Reaction.getShopId());
   return billingRecord;
 }
 
@@ -42,10 +58,9 @@ export function orderCreditMethod(order) {
  * @return {Pbject} returns entire payment method
  */
 export function orderDebitMethod(order) {
-  const debitBillingRecords = order.billing.filter(value => value.paymentMethod.method ===  "debit");
-  const billingRecord = debitBillingRecords.find((billing) => {
-    return billing.shopId === Reaction.getShopId();
-  });
+  const debitBillingRecords = order.billing.filter(value => value.paymentMethod.method === 'debit');
+  const billingRecord = debitBillingRecords
+    .find(billing => billing.shopId === Reaction.getShopId());
   return billingRecord;
 }
 
@@ -55,19 +70,21 @@ export function orderDebitMethod(order) {
  * @memberof Methods/Orders
  * @summary Adjust inventory when an order is placed
  * @param {String} orderId - Add tracking to orderId
- * @todo Why are we waiting until someone with orders permissions does something to reduce quantity of
- * ordered items seems like this could cause over ordered items and messed up order quantities pretty easily.
+ * @todo Why are we waiting until someone with orders
+ * permissions does something to reduce quantity of
+ * ordered items seems like this could cause over ordered
+ * items and messed up order quantities pretty easily.
  * @return {null} no return value
  */
 export function ordersInventoryAdjust(orderId) {
   check(orderId, String);
 
-  if (!Reaction.hasPermission("orders")) {
-    throw new Meteor.Error("access-denied", "Access Denied");
+  if (!Reaction.hasPermission('orders')) {
+    throw new Meteor.Error('access-denied', 'Access Denied');
   }
 
   const order = Orders.findOne(orderId);
-  order.items.forEach(item => {
+  order.items.forEach((item) => {
     Products.update({
       _id: item.variants._id
     }, {
@@ -77,7 +94,7 @@ export function ordersInventoryAdjust(orderId) {
     }, {
       publish: true,
       selector: {
-        type: "variant"
+        type: 'variant'
       }
     });
   });
@@ -88,7 +105,8 @@ export function ordersInventoryAdjust(orderId) {
  * @method
  * @memberof Methods/Orders
  * @summary Adjust inventory for a particular shop when an order is approved
- * @todo Marketplace: Is there a reason to do this any other way? Can admins reduce for more than one shop?
+ * @todo Marketplace: Is there a reason to do this any other way?
+ * Can admins reduce for more than one shop?
  * @param {String} orderId - orderId
  * @param {String} shopId - the id of the shop approving the order
  * @return {null} no return value
@@ -97,12 +115,12 @@ export function ordersInventoryAdjustByShop(orderId, shopId) {
   check(orderId, String);
   check(shopId, String);
 
-  if (!Reaction.hasPermission("orders")) {
-    throw new Meteor.Error("access-denied", "Access Denied");
+  if (!Reaction.hasPermission('orders')) {
+    throw new Meteor.Error('access-denied', 'Access Denied');
   }
 
   const order = Orders.findOne(orderId);
-  order.items.forEach(item => {
+  order.items.forEach((item) => {
     if (item.shopId === shopId) {
       Products.update({
         _id: item.variants._id
@@ -113,7 +131,7 @@ export function ordersInventoryAdjustByShop(orderId, shopId) {
       }, {
         publish: true,
         selector: {
-          type: "variant"
+          type: 'variant'
         }
       });
     }
@@ -131,8 +149,8 @@ export function ordersInventoryAdjustByShop(orderId, shopId) {
 export function orderQuantityAdjust(orderId, refundedItem) {
   check(orderId, String);
 
-  if (!Reaction.hasPermission("orders")) {
-    throw new Meteor.Error("access-denied", "Access Denied");
+  if (!Reaction.hasPermission('orders')) {
+    throw new Meteor.Error('access-denied', 'Access Denied');
   }
 
   const order = Orders.findOne(orderId);
@@ -143,11 +161,16 @@ export function orderQuantityAdjust(orderId, refundedItem) {
 
       Orders.update({
         _id: orderId,
-        items: { $elemMatch: { _id: itemId } }
-      }, { $set:
-        { "items.$.quantity": newQuantity }
-      }
-      );
+        items: {
+          $elemMatch: {
+            _id: itemId
+          }
+        }
+      }, {
+        $set: {
+          'items.$.quantity': newQuantity
+        }
+      });
     }
   });
 }
@@ -162,29 +185,28 @@ export const methods = {
    * @param {Object} shipment - shipment object
    * @return {Object} return workflow result
    */
-  "orders/shipmentPicked": function (order, shipment) {
+  'orders/shipmentPicked': function (order, shipment) {
     check(order, Object);
     check(shipment, Object);
 
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     // Set the status of the items as picked
-    const itemIds = shipment.items.map((item) => {
-      return item._id;
-    });
+    const itemIds = shipment.items.map(item => item._id);
 
-    const result = Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/picked", order, itemIds);
+    const result = Meteor.call('workflow/pushItemWorkflow', 'coreOrderItemWorkflow/picked', order, itemIds);
     if (result === 1) {
       return Orders.update({
-        "_id": order._id,
-        "shipping._id": shipment._id
+        _id: order._id,
+        'shipping._id': shipment._id
       }, {
         $set: {
-          "shipping.$.workflow.status": "coreOrderWorkflow/picked"
-        }, $push: {
-          "shipping.$.workflow.workflow": "coreOrderWorkflow/picked"
+          'shipping.$.workflow.status': 'coreOrderWorkflow/picked'
+        },
+        $push: {
+          'shipping.$.workflow.workflow': 'coreOrderWorkflow/picked'
         }
       });
     }
@@ -200,31 +222,30 @@ export const methods = {
    * @param {Object} shipment - shipment object
    * @return {Object} return workflow result
    */
-  "orders/shipmentPacked": function (order, shipment) {
+  'orders/shipmentPacked': function (order, shipment) {
     check(order, Object);
     check(shipment, Object);
 
     // REVIEW: who should have permission to do this in a marketplace setting?
     // Do we need to update the order schema to reflect multiple packers / shipments?
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     // Set the status of the items as packed
-    const itemIds = shipment.items.map((item) => {
-      return item._id;
-    });
+    const itemIds = shipment.items.map(item => item._id);
 
-    const result = Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/packed", order, itemIds);
+    const result = Meteor.call('workflow/pushItemWorkflow', 'coreOrderItemWorkflow/packed', order, itemIds);
     if (result === 1) {
       return Orders.update({
-        "_id": order._id,
-        "shipping._id": shipment._id
+        _id: order._id,
+        'shipping._id': shipment._id
       }, {
         $set: {
-          "shipping.$.workflow.status": "coreOrderWorkflow/packed"
-        }, $push: {
-          "shipping.$.workflow.workflow": "coreOrderWorkflow/packed"
+          'shipping.$.workflow.status': 'coreOrderWorkflow/packed'
+        },
+        $push: {
+          'shipping.$.workflow.workflow': 'coreOrderWorkflow/packed'
         }
       });
     }
@@ -240,29 +261,28 @@ export const methods = {
    * @param {Object} shipment - shipment object
    * @return {Object} return workflow result
    */
-  "orders/shipmentLabeled": function (order, shipment) {
+  'orders/shipmentLabeled': function (order, shipment) {
     check(order, Object);
     check(shipment, Object);
 
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     // Set the status of the items as labeled
-    const itemIds = shipment.items.map((item) => {
-      return item._id;
-    });
+    const itemIds = shipment.items.map(item => item._id);
 
-    const result = Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/labeled", order, itemIds);
+    const result = Meteor.call('workflow/pushItemWorkflow', 'coreOrderItemWorkflow/labeled', order, itemIds);
     if (result === 1) {
       return Orders.update({
-        "_id": order._id,
-        "shipping._id": shipment._id
+        _id: order._id,
+        'shipping._id': shipment._id
       }, {
         $set: {
-          "shipping.$.workflow.status": "coreOrderWorkflow/labeled"
-        }, $push: {
-          "shipping.$.workflow.workflow": "coreOrderWorkflow/labeled"
+          'shipping.$.workflow.status': 'coreOrderWorkflow/labeled'
+        },
+        $push: {
+          'shipping.$.workflow.workflow': 'coreOrderWorkflow/labeled'
         }
       });
     }
@@ -277,22 +297,22 @@ export const methods = {
    * @param {Object} order - order object
    * @return {Object} Mongo update
    */
-  "orders/makeAdjustmentsToInvoice": function (order) {
+  'orders/makeAdjustmentsToInvoice': function (order) {
     check(order, Object);
 
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     this.unblock(); // REVIEW: Why unblock here?
 
     return Orders.update({
-      "_id": order._id,
-      "billing.shopId": Reaction.getShopId,
-      "billing.paymentMethod.method": "credit"
+      _id: order._id,
+      'billing.shopId': Reaction.getShopId,
+      'billing.paymentMethod.method': 'credit'
     }, {
       $set: {
-        "billing.$.paymentMethod.status": "adjustments"
+        'billing.$.paymentMethod.status': 'adjustments'
       }
     });
   },
@@ -305,14 +325,16 @@ export const methods = {
    * @param {Object} order - order object
    * @return {Object} return this.processPayment result
    */
-  "orders/approvePayment": function (order) {
+  'orders/approvePayment': function (order) {
     check(order, Object);
-    const invoice = orderCreditMethod(order).invoice;
+    const {
+      invoice
+    } = orderCreditMethod(order);
 
     // REVIEW: Who should have access to do this for a marketplace?
     // Do we have/need a shopId on each order?
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     this.unblock(); // REVIEW: why unblock here?
@@ -321,8 +343,12 @@ export const methods = {
     // that the math all still adds up.
     const shopId = Reaction.getShopId();
     const subTotal = invoice.subtotal;
-    const shipping = invoice.shipping;
-    const taxes = invoice.taxes;
+    const {
+      shipping
+    } = invoice;
+    const {
+      taxes
+    } = invoice;
     const discount = invoice.discounts;
     const discountTotal = Math.max(0, subTotal - discount); // ensure no discounting below 0.
     const total = accounting.toFixed(Number(discountTotal) + Number(shipping) + Number(taxes), 2);
@@ -331,16 +357,16 @@ export const methods = {
     ordersInventoryAdjustByShop(order._id, shopId);
 
     return Orders.update({
-      "_id": order._id,
-      "billing.shopId": shopId,
-      "billing.paymentMethod.method": "credit"
+      _id: order._id,
+      'billing.shopId': shopId,
+      'billing.paymentMethod.method': 'credit'
     }, {
       $set: {
-        "billing.$.paymentMethod.amount": total,
-        "billing.$.paymentMethod.status": "approved",
-        "billing.$.paymentMethod.mode": "capture",
-        "billing.$.invoice.discounts": discount,
-        "billing.$.invoice.total": Number(total)
+        'billing.$.paymentMethod.amount': total,
+        'billing.$.paymentMethod.status': 'approved',
+        'billing.$.paymentMethod.mode': 'capture',
+        'billing.$.invoice.discounts': discount,
+        'billing.$.invoice.total': Number(total)
       }
     });
   },
@@ -354,56 +380,54 @@ export const methods = {
    * @param {Boolean} returnToStock - condition to return product to stock
    * @return {Object} ret
    */
-  "orders/cancelOrder": function (order, returnToStock) {
+  'orders/cancelOrder': function (order, returnToStock) {
     check(order, Object);
     check(returnToStock, Boolean);
 
-    // REVIEW: Only marketplace admins should be able to cancel entire order?
-    // Unless order is entirely contained in a single shop? Do we need a switch on marketplace owner dashboard?
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
-    }
 
     if (!returnToStock) {
       ordersInventoryAdjust(order._id);
     }
 
     const billingRecord = order.billing.find(billing => billing.shopId === Reaction.getShopId());
-    const shippingRecord = order.shipping.find(shipping => shipping.shopId === Reaction.getShopId());
+    const shippingRecord = order.shipping
+      .find(shipping => shipping.shopId === Reaction.getShopId());
 
-    let paymentMethod = orderCreditMethod(order).paymentMethod;
-    paymentMethod = Object.assign(paymentMethod, { amount: Number(paymentMethod.amount) });
+    let {
+      paymentMethod
+    } = orderCreditMethod(order);
+    paymentMethod = Object.assign(paymentMethod, {
+      amount: Number(paymentMethod.amount)
+    });
     const invoiceTotal = billingRecord.invoice.total;
     const shipment = shippingRecord;
-    const itemIds = shipment.items.map((item) => {
-      return item._id;
-    });
+    const itemIds = shipment.items.map(item => item._id);
 
     // refund payment to customer
-    Meteor.call("orders/refunds/create", order._id, paymentMethod, Number(invoiceTotal));
+    Meteor.call('orders/refunds/create', order._id, paymentMethod, Number(invoiceTotal));
 
     // send notification to user
     const prefix = Reaction.getShopPrefix();
     const url = `${prefix}/notifications`;
     const sms = true;
-    Meteor.call("notification/send", order.userId, "orderCanceled", url, sms, (err) => {
+    Meteor.call('notification/send', order.userId, 'orderCanceled', url, sms, (err) => {
       if (err) Logger.error(err);
     });
 
     // update item workflow
-    Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/canceled", order, itemIds);
+    Meteor.call('workflow/pushItemWorkflow', 'coreOrderItemWorkflow/canceled', order, itemIds);
 
     return Orders.update({
-      "_id": order._id,
-      "billing.shopId": Reaction.getShopId,
-      "billing.paymentMethod.method": "credit"
+      _id: order._id,
+      'billing.shopId': Reaction.getShopId,
+      'billing.paymentMethod.method': 'credit'
     }, {
       $set: {
-        "workflow.status": "coreOrderWorkflow/canceled",
-        "billing.$.paymentMethod.mode": "cancel"
+        'workflow.status': 'coreOrderWorkflow/canceled',
+        'billing.$.paymentMethod.mode': 'cancel'
       },
       $push: {
-        "workflow.workflow": "coreOrderWorkflow/canceled"
+        'workflow.workflow': 'coreOrderWorkflow/canceled'
       }
     });
   },
@@ -416,28 +440,27 @@ export const methods = {
    * @param {Object} order - order object
    * @return {Object} return this.processPayment result
    */
-  "orders/processPayment": function (order) {
+  'orders/processPayment': function (order) {
     check(order, Object);
 
     // REVIEW: Who should have access to process payment in marketplace?
     // Probably just the shop owner for now?
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     this.unblock();
 
-    return Meteor.call("orders/processPayments", order._id, function (error, result) {
+    return Meteor.call('orders/processPayments', order._id, function (error, result) {
       if (result) {
-        Meteor.call("workflow/pushOrderWorkflow", "coreOrderWorkflow", "coreProcessPayment", order._id);
+        Meteor.call('workflow/pushOrderWorkflow', 'coreOrderWorkflow', 'coreProcessPayment', order._id);
 
-        const shippingRecord = order.shipping.find(shipping => shipping.shopId === Reaction.getShopId());
+        const shippingRecord = order.shipping
+          .find(shipping => shipping.shopId === Reaction.getShopId());
         // Set the status of the items as shipped
-        const itemIds = shippingRecord.items.map((item) => {
-          return item._id;
-        });
+        const itemIds = shippingRecord.items.map(item => item._id);
 
-        Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/captured", order, itemIds);
+        Meteor.call('workflow/pushItemWorkflow', 'coreOrderItemWorkflow/captured', order, itemIds);
 
         return this.processPayment(order);
       }
@@ -454,15 +477,15 @@ export const methods = {
    * @param {Object} shipment - shipment object
    * @return {Object} return results of several operations
    */
-  "orders/shipmentShipped": function (order, shipment) {
+  'orders/shipmentShipped': function (order, shipment) {
     check(order, Object);
     check(shipment, Object);
 
     // TODO: Who should have access to ship shipments in a marketplace setting
     // Should be anyone who has product in an order.
-    if (!Reaction.hasPermission("orders")) {
+    if (!Reaction.hasPermission('orders')) {
       Logger.error("User does not have 'orders' permissions");
-      throw new Meteor.Error("access-denied", "Access Denied");
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     this.unblock();
@@ -470,45 +493,47 @@ export const methods = {
     let completedItemsResult;
     let completedOrderResult;
 
-    const itemIds = shipment.items.map((item) => {
-      return item._id;
-    });
+    const itemIds = shipment.items.map(item => item._id);
 
     // TODO: In the future, this could be handled by shipping delivery status
     // REVIEW: This hook seems to run before the shipment has been marked as shipped
-    Hooks.Events.run("onOrderShipmentShipped", order, itemIds);
-    const workflowResult = Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/shipped", order, itemIds);
+    Hooks.Events.run('onOrderShipmentShipped', order, itemIds);
+    const workflowResult = Meteor.call('workflow/pushItemWorkflow', 'coreOrderItemWorkflow/shipped', order, itemIds);
 
     if (workflowResult === 1) {
       // Move to completed status for items
-      completedItemsResult = Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/completed", order, itemIds);
+      completedItemsResult = Meteor.call(
+        'workflow/pushItemWorkflow', 'coreOrderItemWorkflow/completed', order,
+        itemIds
+      );
 
       if (completedItemsResult === 1) {
         // Then try to mark order as completed.
-        completedOrderResult = Meteor.call("workflow/pushOrderWorkflow", "coreOrderWorkflow", "completed", order);
+        completedOrderResult = Meteor.call('workflow/pushOrderWorkflow', 'coreOrderWorkflow', 'completed', order);
       }
     }
 
     if (order.email) {
-      Meteor.call("orders/sendNotification", order, "shipped");
+      Meteor.call('orders/sendNotification', order, 'shipped');
     } else {
       // TODO: add to order history that no email was sent
-      Logger.warn("No order email found. No notification sent.");
+      Logger.warn('No order email found. No notification sent.');
     }
 
     Orders.update({
-      "_id": order._id,
-      "shipping._id": shipment._id
+      _id: order._id,
+      'shipping._id': shipment._id
     }, {
       $set: {
-        "shipping.$.workflow.status": "coreOrderWorkflow/shipped"
-      }, $push: {
-        "shipping.$.workflow.workflow": "coreOrderWorkflow/shipped"
+        'shipping.$.workflow.status': 'coreOrderWorkflow/shipped'
+      },
+      $push: {
+        'shipping.$.workflow.workflow': 'coreOrderWorkflow/shipped'
       }
     });
 
     return {
-      workflowResult: workflowResult,
+      workflowResult,
       completedItems: completedItemsResult,
       completedOrder: completedOrderResult
     };
@@ -522,12 +547,12 @@ export const methods = {
    * @param {Object} order - order object
    * @return {Object} return workflow result
    */
-  "orders/shipmentDelivered": function (order) {
+  'orders/shipmentDelivered': function (order) {
     check(order, Object);
 
     // REVIEW: this should be callable from the server via callback from Shippo or other webhook
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     this.unblock();
@@ -535,44 +560,43 @@ export const methods = {
     const shipment = order.shipping.find(shipping => shipping.shopId === Reaction.getShopId());
 
     if (order.email) {
-      Meteor.call("orders/sendNotification", order, (err) => {
+      Meteor.call('orders/sendNotification', order, (err) => {
         if (err) {
-          Logger.error(err, "orders/shipmentDelivered: Failed to send notification");
+          Logger.error(err, 'orders/shipmentDelivered: Failed to send notification');
         }
       });
     } else {
-      Logger.warn("No order email found. No notification sent.");
+      Logger.warn('No order email found. No notification sent.');
     }
 
-    const itemIds = shipment.items.map((item) => {
-      return item._id;
-    });
+    const itemIds = shipment.items.map(item => item._id);
 
-    Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/delivered", order, itemIds);
-    Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/completed", order, itemIds);
+    Meteor.call('workflow/pushItemWorkflow', 'coreOrderItemWorkflow/delivered', order, itemIds);
+    Meteor.call('workflow/pushItemWorkflow', 'coreOrderItemWorkflow/completed', order, itemIds);
 
-    const isCompleted = order.items.every((item) => {
-      return item.workflow.workflow && item.workflow.workflow.includes("coreOrderItemWorkflow/completed");
-    });
+    const isCompleted = order.items
+      .every(item => item.workflow.workflow && item.workflow.workflow
+        .includes('coreOrderItemWorkflow/completed'));
 
     Orders.update({
-      "_id": order._id,
-      "shipping._id": shipment._id
+      _id: order._id,
+      'shipping._id': shipment._id
     }, {
       $set: {
-        "shipping.$.workflow.status": "coreOrderWorkflow/delivered"
-      }, $push: {
-        "shipping.$.workflow.workflow": "coreOrderWorkflow/delivered"
+        'shipping.$.workflow.status': 'coreOrderWorkflow/delivered'
+      },
+      $push: {
+        'shipping.$.workflow.workflow': 'coreOrderWorkflow/delivered'
       }
     });
 
     if (isCompleted === true) {
-      Hooks.Events.run("onOrderShipmentDelivered", order._id);
-      Meteor.call("workflow/pushOrderWorkflow", "coreOrderWorkflow", "completed", order);
+      Hooks.Events.run('onOrderShipmentDelivered', order._id);
+      Meteor.call('workflow/pushOrderWorkflow', 'coreOrderWorkflow', 'completed', order);
       return true;
     }
 
-    Meteor.call("workflow/pushOrderWorkflow", "coreOrderWorkflow", "processing", order);
+    Meteor.call('workflow/pushOrderWorkflow', 'coreOrderWorkflow', 'processing', order);
 
     return false;
   },
@@ -586,14 +610,14 @@ export const methods = {
    * @param {Object} action - send notification action
    * @return {Boolean} email sent or not
    */
-  "orders/sendNotification": function (order, action) {
+  'orders/sendNotification': function (order, action) {
     check(order, Object);
     check(action, Match.OneOf(String, undefined));
 
     // TODO: REVIEW: SECURITY this only checks to see if a userId exists
     if (!this.userId) {
-      Logger.error("orders/sendNotification: Access denied");
-      throw new Meteor.Error("access-denied", "Access Denied");
+      Logger.error('orders/sendNotification: Access denied');
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     this.unblock();
@@ -604,11 +628,11 @@ export const methods = {
     // Get shop logo, if available
     let emailLogo;
     if (Array.isArray(shop.brandAssets)) {
-      const brandAsset = shop.brandAssets.find((asset) => asset.type === "navbarBrandImage");
+      const brandAsset = shop.brandAssets.find(asset => asset.type === 'navbarBrandImage');
       const mediaId = Media.findOne(brandAsset.mediaId);
       emailLogo = path.join(Meteor.absoluteUrl(), mediaId.url());
     } else {
-      emailLogo = Meteor.absoluteUrl() + "resources/email-templates/shop-logo.png";
+      emailLogo = `${Meteor.absoluteUrl() }resources/email-templates/shop-logo.png`;
     }
 
     let subtotal = 0;
@@ -620,7 +644,7 @@ export const methods = {
     let paymentMethod = {};
     let shippingAddress = {};
     let tracking;
-    let carrier = "";
+    let carrier = '';
 
     for (const billingRecord of order.billing) {
       subtotal += Number.parseFloat(billingRecord.invoice.subtotal);
@@ -638,9 +662,9 @@ export const methods = {
       shippingCost += shippingRecord.shipmentMethod.rate;
     }
 
-
-    const refundResult = Meteor.call("orders/refunds/list", order);
-    const refundTotal = Array.isArray(refundResult) && refundResult.reduce((acc, refund) => acc + refund.amount, 0);
+    const refundResult = Meteor.call('orders/refunds/list', order);
+    const refundTotal = Array
+      .isArray(refundResult) && refundResult.reduce((acc, refund) => acc + refund.amount, 0);
 
     // Get user currency formatting from shops collection, remove saved rate
     // using billing[0] here to get the currency and exchange rate used because
@@ -648,7 +672,9 @@ export const methods = {
     // and it's inconsistent, i.e. sometimes there's no exchangeRate field in the secondary
     // shop's currency array.
     // TODO: Remove billing[0] and properly aquire userCurrency and exchange rate
-    const userCurrencyFormatting = _.omit(shop.currencies[order.billing[0].currency.userCurrency], ["enabled", "rate"]);
+    const userCurrencyFormatting = _.omit(shop.currencies[order.billing[0].currency.userCurrency], ['enabled',
+      'rate'
+    ]);
 
     // Get user currency exchange rate at time of transaction
     const userCurrencyExchangeRate = order.billing[0].currency.exchangeRate;
@@ -675,25 +701,26 @@ export const methods = {
           // Otherwise push the unique item into the combinedItems array
 
           // Add displayPrice to match user currency settings
-          orderItem.variants.displayPrice = accounting.formatMoney(
-            orderItem.variants.price * userCurrencyExchangeRate, userCurrencyFormatting
-          );
+          orderItem.variants.displayPrice = accounting.formatMoney(orderItem.variants.price *
+            userCurrencyExchangeRate, userCurrencyFormatting);
 
           combinedItems.push(orderItem);
 
           // Placeholder image if there is no product image
-          orderItem.placeholderImage = Meteor.absoluteUrl() + "resources/placeholder.gif";
+          orderItem.placeholderImage = `${Meteor.absoluteUrl() }resources/placeholder.gif`;
 
           const variantImage = Media.findOne({
-            "metadata.productId": orderItem.productId,
-            "metadata.variantId": orderItem.variants._id
+            'metadata.productId': orderItem.productId,
+            'metadata.variantId': orderItem.variants._id
           });
           // variant image
           if (variantImage) {
             orderItem.variantImage = path.join(Meteor.absoluteUrl(), variantImage.url());
           }
           // find a default image
-          const productImage = Media.findOne({ "metadata.productId": orderItem.productId });
+          const productImage = Media.findOne({
+            'metadata.productId': orderItem.productId
+          });
           if (productImage) {
             orderItem.productImage = path.join(Meteor.absoluteUrl(), productImage.url());
           }
@@ -703,14 +730,14 @@ export const methods = {
       // Merge data into single object to pass to email template
       const dataForEmail = {
         // Shop Data
-        shop: shop,
+        shop,
         contactEmail: shop.emails[0].address,
         homepage: Meteor.absoluteUrl(),
-        emailLogo: emailLogo,
-        copyrightDate: moment().format("YYYY"),
+        emailLogo,
+        copyrightDate: moment().format('YYYY'),
         legalName: shop.addressBook[0].company,
         physicalAddress: {
-          address: shop.addressBook[0].address1 + " " + shop.addressBook[0].address2,
+          address: `${shop.addressBook[0].address1} ${ shop.addressBook[0].address2}`,
           city: shop.addressBook[0].city,
           region: shop.addressBook[0].region,
           postal: shop.addressBook[0].postal
@@ -720,22 +747,22 @@ export const methods = {
           display: true,
           facebook: {
             display: true,
-            icon: Meteor.absoluteUrl() + "resources/email-templates/facebook-icon.png",
-            link: "https://www.facebook.com"
+            icon: `${Meteor.absoluteUrl()}resources/email-templates/facebook-icon.png`,
+            link: 'https://www.facebook.com'
           },
           googlePlus: {
             display: true,
-            icon: Meteor.absoluteUrl() + "resources/email-templates/google-plus-icon.png",
-            link: "https://plus.google.com"
+            icon: `${Meteor.absoluteUrl() }resources/email-templates/google-plus-icon.png`,
+            link: 'https://plus.google.com'
           },
           twitter: {
             display: true,
-            icon: Meteor.absoluteUrl() + "resources/email-templates/twitter-icon.png",
-            link: "https://www.twitter.com"
+            icon: `${Meteor.absoluteUrl() }resources/email-templates/twitter-icon.png`,
+            link: 'https://www.twitter.com'
           }
         },
         // Order Data
-        order: order,
+        order,
         billing: {
           address: {
             address: address.address1,
@@ -744,34 +771,29 @@ export const methods = {
             postal: address.postal
           },
           paymentMethod: paymentMethod.storedCard || paymentMethod.processor,
-          subtotal: accounting.formatMoney(
-            subtotal * userCurrencyExchangeRate, userCurrencyFormatting
-          ),
-          shipping: accounting.formatMoney(
-            shippingCost * userCurrencyExchangeRate, userCurrencyFormatting
-          ),
-          taxes: accounting.formatMoney(
-            taxes * userCurrencyExchangeRate, userCurrencyFormatting
-          ),
-          discounts: accounting.formatMoney(
-            discounts * userCurrencyExchangeRate, userCurrencyFormatting
-          ),
-          refunds: accounting.formatMoney(
-            refundTotal * userCurrencyExchangeRate, userCurrencyFormatting
-          ),
-          total: accounting.formatMoney(
-            (subtotal + shippingCost) * userCurrencyExchangeRate, userCurrencyFormatting
-          ),
-          adjustedTotal: accounting.formatMoney(
-            (amount - refundTotal) * userCurrencyExchangeRate, userCurrencyFormatting
-          )
+          subtotal: accounting
+            .formatMoney(subtotal * userCurrencyExchangeRate, userCurrencyFormatting),
+          shipping: accounting
+            .formatMoney(shippingCost * userCurrencyExchangeRate, userCurrencyFormatting),
+          taxes: accounting
+            .formatMoney(taxes * userCurrencyExchangeRate, userCurrencyFormatting),
+          discounts: accounting
+            .formatMoney(discounts * userCurrencyExchangeRate, userCurrencyFormatting),
+          refunds: accounting
+            .formatMoney(refundTotal * userCurrencyExchangeRate, userCurrencyFormatting),
+          total: accounting
+            .formatMoney((subtotal + shippingCost) * userCurrencyExchangeRate,
+              userCurrencyFormatting),
+          adjustedTotal: accounting
+            .formatMoney((amount - refundTotal) * userCurrencyExchangeRate,
+              userCurrencyFormatting)
         },
-        combinedItems: combinedItems,
-        orderDate: moment(order.createdAt).format("MM/DD/YYYY"),
+        combinedItems,
+        orderDate: moment(order.createdAt).format('MM/DD/YYYY'),
         orderUrl: `cart/completed?_id=${order.cartId}`,
         shipping: {
-          tracking: tracking,
-          carrier: carrier,
+          tracking,
+          carrier,
           address: {
             address: shippingAddress.address1,
             city: shippingAddress.city,
@@ -783,33 +805,32 @@ export const methods = {
 
       Logger.debug(`orders/sendNotification status: ${order.workflow.status}`);
 
-
       // handle missing root shop email
       if (!shop.emails[0].address) {
-        shop.emails[0].address = "no-reply@reactioncommerce.com";
-        Logger.warn("No shop email configured. Using no-reply to send mail");
+        shop.emails[0].address = 'no-reply@reactioncommerce.com';
+        Logger.warn('No shop email configured. Using no-reply to send mail');
       }
 
       // anonymous users without emails.
       if (!order.email) {
-        const msg = "No order email found. No notification sent.";
+        const msg = 'No order email found. No notification sent.';
         Logger.warn(msg);
-        throw new Meteor.Error("email-error", msg);
+        throw new Meteor.Error('email-error', msg);
       }
 
       // Compile Email with SSR
       let subject;
       let tpl;
 
-      if (action === "shipped") {
-        tpl = "orders/shipped";
-        subject = "orders/shipped/subject";
-      } else if (action === "refunded") {
-        tpl = "orders/refunded";
-        subject = "orders/refunded/subject";
-      } else if (action === "itemRefund") {
-        tpl = "orders/itemRefund";
-        subject = "orders/itemRefund/subject";
+      if (action === 'shipped') {
+        tpl = 'orders/shipped';
+        subject = 'orders/shipped/subject';
+      } else if (action === 'refunded') {
+        tpl = 'orders/refunded';
+        subject = 'orders/refunded/subject';
+      } else if (action === 'itemRefund') {
+        tpl = 'orders/itemRefund';
+        subject = 'orders/itemRefund/subject';
       } else {
         tpl = `orders/${order.workflow.status}`;
         subject = `orders/${order.workflow.status}/subject`;
@@ -841,22 +862,22 @@ export const methods = {
    * @param {String} tracking - tracking id
    * @return {String} returns order update result
    */
-  "orders/updateShipmentTracking": function (order, shipment, tracking) {
+  'orders/updateShipmentTracking': function (order, shipment, tracking) {
     check(order, Object);
     check(shipment, Object);
     check(tracking, String);
 
     // REVIEW: This method should be callable from a webhook (e.g. Shippo)
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     return Orders.update({
-      "_id": order._id,
-      "shipping._id": shipment._id
+      _id: order._id,
+      'shipping._id': shipment._id
     }, {
       $set: {
-        ["shipping.$.tracking"]: tracking
+        'shipping.$.tracking': tracking
       }
     });
   },
@@ -870,24 +891,24 @@ export const methods = {
    * @param {String} email - valid email address
    * @return {String} returns order update result
    */
-  "orders/addOrderEmail": function (cartId, email) {
+  'orders/addOrderEmail': function (cartId, email) {
     check(cartId, String);
     check(email, String);
     /**
-    *Instead of checking the Orders permission, we should check if user is
-    *connected.This is only needed for guest where email is
-    *provided for tracking order progress.
-    */
+     *Instead of checking the Orders permission, we should check if user is
+     *connected.This is only needed for guest where email is
+     *provided for tracking order progress.
+     */
 
     if (!Meteor.userId()) {
-      throw new Meteor.Error("access-denied", "Access Denied. You are not connected.");
+      throw new Meteor.Error('access-denied', 'Access Denied. You are not connected.');
     }
 
     return Orders.update({
-      cartId: cartId
+      cartId
     }, {
       $set: {
-        email: email
+        email
       }
     });
   },
@@ -902,22 +923,22 @@ export const methods = {
    * @param {String} value - event value
    * @return {String} returns order update result
    */
-  "orders/updateHistory": function (orderId, event, value) {
+  'orders/updateHistory': function (orderId, event, value) {
     check(orderId, String);
     check(event, String);
     check(value, Match.Optional(String));
 
     // REVIEW: For marketplace implementations
     // This should be possible for anyone with permission to act on the order
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     return Orders.update(orderId, {
       $addToSet: {
         history: {
-          event: event,
-          value: value,
+          event,
+          value,
           userId: Meteor.userId(),
           updatedAt: new Date()
         }
@@ -934,81 +955,89 @@ export const methods = {
    * @param {String} orderId - add tracking to orderId
    * @return {null} no return value
    */
-  "orders/capturePayments": (orderId) => {
+  'orders/capturePayments': (orderId) => {
     check(orderId, String);
     // REVIEW: For marketplace implmentations who should be able to capture payments?
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
     const shopId = Reaction.getShopId(); // the shopId of the current user, i.e. merchant
     const order = Orders.findOne(orderId);
     // find the appropriate shipping record by shop
-    const shippingRecord = order.shipping.find((sRecord) => sRecord.shopId === shopId);
-    const itemIds = shippingRecord.items.map((item) => {
-      return item._id;
-    });
+    const shippingRecord = order.shipping.find(sRecord => sRecord.shopId === shopId);
+    const itemIds = shippingRecord.items.map(item => item._id);
 
-    Meteor.call("workflow/pushItemWorkflow", "coreOrderItemWorkflow/captured", order, itemIds);
+    Meteor.call('workflow/pushItemWorkflow', 'coreOrderItemWorkflow/captured', order, itemIds);
 
-    if (order.workflow.status === "new") {
-      Meteor.call("workflow/pushOrderWorkflow", "coreOrderWorkflow", "processing", order);
+    if (order.workflow.status === 'new') {
+      Meteor.call('workflow/pushOrderWorkflow', 'coreOrderWorkflow', 'processing', order);
     }
 
     // process order..payment.paymentMethod
     // find the billing record based on shopId
-    const bilingRecord = order.billing.find((bRecord) => bRecord.shopId === shopId);
+    const bilingRecord = order.billing.find(bRecord => bRecord.shopId === shopId);
 
-    const paymentMethod = bilingRecord.paymentMethod;
-    const transactionId = paymentMethod.transactionId;
+    const {
+      paymentMethod
+    } = bilingRecord;
+    const {
+      transactionId
+    } = paymentMethod;
 
-    if (paymentMethod.mode === "capture" && paymentMethod.status === "approved" && paymentMethod.processor) {
+    if (paymentMethod.mode === 'capture' && paymentMethod.status === 'approved' && paymentMethod.processor) {
       // Grab the amount from the shipment, otherwise use the original amount
       const processor = paymentMethod.processor.toLowerCase();
 
       Meteor.call(`${processor}/payment/capture`, paymentMethod, (error, result) => {
         if (result && result.saved === true) {
-          const metadata = Object.assign(bilingRecord.paymentMethod.metadata || {}, result.metadata || {});
+          const metadata = Object
+            .assign(bilingRecord.paymentMethod.metadata || {}, result.metadata || {});
 
           Orders.update({
-            "_id": orderId,
-            "billing.paymentMethod.transactionId": transactionId
+            _id: orderId,
+            'billing.paymentMethod.transactionId': transactionId
           }, {
             $set: {
-              "billing.$.paymentMethod.mode": "capture",
-              "billing.$.paymentMethod.status": "completed",
-              "billing.$.paymentMethod.metadata": metadata
+              'billing.$.paymentMethod.mode': 'capture',
+              'billing.$.paymentMethod.status': 'completed',
+              'billing.$.paymentMethod.metadata': metadata
             },
             $push: {
-              "billing.$.paymentMethod.transactions": result
+              'billing.$.paymentMethod.transactions': result
             }
           });
 
           // event onOrderPaymentCaptured used for confirmation hooks
           // ie: confirmShippingMethodForOrder is triggered here
-          Hooks.Events.run("onOrderPaymentCaptured", orderId);
+          Hooks.Events.run('onOrderPaymentCaptured', orderId);
         } else {
           if (result && result.error) {
-            Logger.fatal("Failed to capture transaction.", order, paymentMethod.transactionId, result.error);
+            Logger.fatal('Failed to capture transaction.', order, paymentMethod.transactionId, result.error);
           } else {
-            Logger.fatal("Failed to capture transaction.", order, paymentMethod.transactionId, error);
+            Logger.fatal('Failed to capture transaction.', order, paymentMethod.transactionId, error);
           }
 
           Orders.update({
-            "_id": orderId,
-            "billing.paymentMethod.transactionId": transactionId
+            _id: orderId,
+            'billing.paymentMethod.transactionId': transactionId
           }, {
             $set: {
-              "billing.$.paymentMethod.mode": "capture",
-              "billing.$.paymentMethod.status": "error"
+              'billing.$.paymentMethod.mode': 'capture',
+              'billing.$.paymentMethod.status': 'error'
             },
             $push: {
-              "billing.$.paymentMethod.transactions": result
+              'billing.$.paymentMethod.transactions': result
             }
           });
 
-          return { error: "orders/capturePayments: Failed to capture transaction" };
+          return {
+            error: 'orders/capturePayments: Failed to capture transaction'
+          };
         }
-        return { error, result };
+        return {
+          error,
+          result
+        };
       });
     }
   },
@@ -1022,16 +1051,18 @@ export const methods = {
    * @param {Object} order - order object
    * @return {Array} Array contains refund records
    */
-  "orders/refunds/list": function (order) {
+  'orders/refunds/list': function (order) {
     check(order, Object);
 
-    if (!this.userId === order.userId && !Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!this.userId === order.userId && !Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     const refunds = [];
     for (const billingRecord of order.billing) {
-      const paymentMethod = billingRecord.paymentMethod;
+      const {
+        paymentMethod
+      } = billingRecord;
       const processor = paymentMethod.processor.toLowerCase();
       const shopRefunds = Meteor.call(`${processor}/refund/list`, paymentMethod);
       refunds.push(...shopRefunds);
@@ -1050,19 +1081,21 @@ export const methods = {
    * @param {Bool} sendEmail - Send email confirmation
    * @return {null} no return value
    */
-  "orders/refunds/create": function (orderId, paymentMethod, amount, sendEmail = true) {
+  'orders/refunds/create': function (orderId, paymentMethod, amount, sendEmail = true) {
     check(orderId, String);
     check(paymentMethod, Reaction.Schemas.PaymentMethod);
     check(amount, Number);
     check(sendEmail, Match.Optional(Boolean));
 
     // REVIEW: For marketplace implementations, who can refund? Just the marketplace?
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
     const processor = paymentMethod.processor.toLowerCase();
     const order = Orders.findOne(orderId);
-    const transactionId = paymentMethod.transactionId;
+    const {
+      transactionId
+    } = paymentMethod;
 
     const packageId = paymentMethod.paymentPackageId;
     const settingsKey = paymentMethod.paymentSettingsKey;
@@ -1076,50 +1109,50 @@ export const methods = {
 
     let result;
     let query = {};
-    if (checkSupportedMethods.includes("De-authorize")) {
+    if (checkSupportedMethods.includes('De-authorize')) {
       result = Meteor.call(`${processor}/payment/deAuthorize`, paymentMethod, amount);
       query = {
         $push: {
-          "billing.$.paymentMethod.transactions": result
+          'billing.$.paymentMethod.transactions': result
         }
       };
 
       if (result.saved === false) {
-        Logger.fatal("Attempt for de-authorize transaction failed", order._id, paymentMethod.transactionId, result.error);
-        throw new Meteor.Error("Attempt to de-authorize transaction failed", result.error);
+        Logger.fatal('Attempt for de-authorize transaction failed', order._id, paymentMethod.transactionId, result.error);
+        throw new Meteor.Error('Attempt to de-authorize transaction failed', result.error);
       }
-    } else if (orderMode === "capture") {
+    } else if (orderMode === 'capture') {
       result = Meteor.call(`${processor}/refund/create`, paymentMethod, amount);
       query = {
         $push: {
-          "billing.$.paymentMethod.transactions": result
+          'billing.$.paymentMethod.transactions': result
         }
       };
 
       if (result.saved === false) {
-        Logger.fatal("Attempt for refund transaction failed", order._id, paymentMethod.transactionId, result.error);
-        throw new Meteor.Error("Attempt to refund transaction failed", result.error);
+        Logger.fatal('Attempt for refund transaction failed', order._id, paymentMethod.transactionId, result.error);
+        throw new Meteor.Error('Attempt to refund transaction failed', result.error);
       }
     }
 
     Orders.update({
-      "_id": orderId,
-      "billing.shopId": Reaction.getShopId(),
-      "billing.paymentMethod.transactionId": transactionId
+      _id: orderId,
+      'billing.shopId': Reaction.getShopId(),
+      'billing.paymentMethod.transactionId': transactionId
     }, {
       $set: {
-        "billing.$.paymentMethod.status": "refunded"
+        'billing.$.paymentMethod.status': 'refunded'
       },
       ...query
     });
 
-    Hooks.Events.run("onOrderRefundCreated", orderId);
+    Hooks.Events.run('onOrderRefundCreated', orderId);
 
     // Send email to notify customer of a refund
-    if (checkSupportedMethods.includes("De-authorize")) {
-      Meteor.call("orders/sendNotification", order);
-    } else if (orderMode === "capture" && sendEmail) {
-      Meteor.call("orders/sendNotification", order, "refunded");
+    if (checkSupportedMethods.includes('De-authorize')) {
+      Meteor.call('orders/sendNotification', order);
+    } else if (orderMode === 'capture' && sendEmail) {
+      Meteor.call('orders/sendNotification', order, 'refunded');
     }
   },
 
@@ -1133,59 +1166,63 @@ export const methods = {
    * @param {Object} refundItemsInfo - info about refund items
    * @return {Object} refund boolean and result/error value
    */
-  "orders/refunds/refundItems": function (orderId, paymentMethod, refundItemsInfo) {
+  'orders/refunds/refundItems': function (orderId, paymentMethod, refundItemsInfo) {
     check(orderId, String);
     check(paymentMethod, Reaction.Schemas.PaymentMethod);
     check(refundItemsInfo, Object);
 
     // REVIEW: For marketplace implementations, who can refund? Just the marketplace?
-    if (!Reaction.hasPermission("orders")) {
-      throw new Meteor.Error("access-denied", "Access Denied");
+    if (!Reaction.hasPermission('orders')) {
+      throw new Meteor.Error('access-denied', 'Access Denied');
     }
 
     const fut = new Future();
     const order = Orders.findOne(orderId);
-    const transactionId = paymentMethod.transactionId;
+    const {
+      transactionId
+    } = paymentMethod;
     const amount = refundItemsInfo.total;
-    const quantity = refundItemsInfo.quantity;
+    const {
+      quantity
+    } = refundItemsInfo;
     const refundItems = refundItemsInfo.items;
     const originalQuantity = order.items.reduce((acc, item) => acc + item.quantity, 0);
 
     // refund payment to customer
-    Meteor.call("orders/refunds/create", order._id, paymentMethod, Number(amount), false, (error, result) => {
+    Meteor.call('orders/refunds/create', order._id, paymentMethod, Number(amount), false, (error, result) => {
       if (error) {
-        Logger.fatal("Attempt for refund transaction failed", order._id, paymentMethod.transactionId, error);
+        Logger.fatal('Attempt for refund transaction failed', order._id, paymentMethod.transactionId, error);
         fut.return({
           refund: false,
-          error: error
+          error
         });
       }
       if (result) {
-        refundItems.forEach(refundItem => {
+        refundItems.forEach((refundItem) => {
           orderQuantityAdjust(orderId, refundItem);
         });
 
-        let refundedStatus = "refunded";
+        let refundedStatus = 'refunded';
 
         if (quantity < originalQuantity) {
-          refundedStatus = "partialRefund";
+          refundedStatus = 'partialRefund';
         }
 
         Orders.update({
-          "_id": orderId,
-          "billing.shopId": Reaction.getShopId(),
-          "billing.paymentMethod.transactionId": transactionId
+          _id: orderId,
+          'billing.shopId': Reaction.getShopId(),
+          'billing.paymentMethod.transactionId': transactionId
         }, {
           $set: {
-            "billing.$.paymentMethod.status": refundedStatus
+            'billing.$.paymentMethod.status': refundedStatus
           }
         });
 
-        Meteor.call("orders/sendNotification", order, "itemRefund");
+        Meteor.call('orders/sendNotification', order, 'itemRefund');
 
         fut.return({
           refund: true,
-          result: result
+          result
         });
       }
     });
