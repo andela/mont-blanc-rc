@@ -75,8 +75,10 @@ const wrapComponent = (Comp) => (
       });
     }
 
-    handleChildUnmount = () =>  {
+    handleChildUnmount = () => {
       this.setState({ renderChild: false });
+      const body = document.getElementsByTagName("body")[0];
+      body.style.overflow = "visible";
     }
 
     render() {
@@ -104,6 +106,6 @@ const wrapComponent = (Comp) => (
   }
 );
 
-registerComponent("SearchSubscription", SearchSubscription, [ wrapComponent ]);
+registerComponent("SearchSubscription", SearchSubscription, [wrapComponent]);
 
 export default compose(wrapComponent)(SearchSubscription);
