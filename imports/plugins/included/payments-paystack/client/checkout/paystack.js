@@ -142,7 +142,7 @@ AutoForm.addHooks('paystack-payment-form', {
         if (currency === 'USD') {
           axios
             .get(
-              `https://www.apilayer.net/api/live?
+              `http://www.apilayer.net/api/live?
               access_key=8b26ed909838b9620281b02618f0a668&
               format=1&
               source=${currency}&
