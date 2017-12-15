@@ -45,8 +45,8 @@ export class Report extends React.Component {
       analyticsStatement: {},
       ordersAnalytics: [],
       productsAnalytics: [],
-      fromDate: Date.parse('2017-10-13'),
-      toDate: Date.now(),
+      fromDate: Date.parse('2017-5-13'),
+      toDate: Date.parse('2017-10-13'),
       dateIsChange: false,
       productInventoryData: [],
       productSearchTerm: '',
@@ -244,7 +244,7 @@ export class Report extends React.Component {
   }
   render() {
     return (
-      <div className="container-fluid">
+      <div style={{ marginTop: '10px' }} className="container-fluid">
         <ReportSideBar
           handleShowRetailDashBoard={this.handleShowRetailDashBoard}
           handleShowSalesReport={this.handleShowSalesReport}
