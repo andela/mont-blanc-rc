@@ -1,4 +1,5 @@
 /* eslint camelcase: 0 */
+import axios from 'axios';
 import {
   Meteor
 } from 'meteor/meteor';
@@ -55,7 +56,7 @@ Template.paystackPaymentForm.helpers({
   }
 });
 
-const verifyPayment = (reference, secretKey, form, template, packageData) => {
+const verifyPayment = (reference, secretKey, form, template, packageData, total) => {
   Paystack.verify(reference, secretKey, (error, response) => {
     if (error) {
       handlePaystackSubmitError(error);
@@ -72,7 +73,7 @@ const verifyPayment = (reference, secretKey, form, template, packageData) => {
         transactionId: transaction.reference,
         riskLevel: 'normal',
         currency: transaction.currency,
-        amount: transaction.amount / 100,
+        amount: total,
         status: transaction.status ? 'passed' : 'failed',
         mode: 'authorize',
         createdAt: new Date(),
@@ -85,22 +86,13 @@ const verifyPayment = (reference, secretKey, form, template, packageData) => {
   });
 };
 
-const getExchangeRate = (currency) => {
-  let exchangeRate = 0;
-  if (currency === 'USD') {
-    exchangeRate = 360;
-  }
-  return exchangeRate;
-};
-
 /**
  *
  * @param {String} rawAmount
- * @param {String} currency
+ * @param {String} exchangeRate
  * @returns {String} exchangedAmount
  */
-const loadAmount = (rawAmount, currency) => {
-  const exchangeRate = getExchangeRate(currency);
+const loadAmount = (rawAmount, exchangeRate) => {
   const nairaToKoboRate = 100;
   let exchangedAmount = 0;
   if (rawAmount) {
@@ -115,8 +107,6 @@ AutoForm.addHooks('paystack-payment-form', {
     const {
       currency
     } = Shops.findOne();
-
-    const exchangedValue = loadAmount(Number(total), currency);
 
     submitting = true;
     const {
@@ -149,35 +139,51 @@ AutoForm.addHooks('paystack-payment-form', {
           secretKey
         } = keysRetrivalResponse;
 
-        /**
-         * Load the paystack platform
-         */
-        PaystackPop.setup({
-          key: publicKey,
-          email,
-          amount: exchangedValue,
-          callback: (response) => {
-            if (response.reference) {
-              const {
-                reference
-              } = response;
-              verifyPayment(reference, secretKey, form, template, packageData);
-            } else {
-              handlePaystackSubmitError(response);
-              uiEnd(template, 'Resubmit payment');
-            }
-          },
+        if (currency === 'USD') {
+          axios
+            .get(`http://www.apilayer.net/api/live?
+              access_key=8b26ed909838b9620281b02618f0a668&
+              format=1&
+              source=${currency}&
+              currencies=NGN`)
+            .then((rateResponse) => {
+              const exchangeRate = Math.round(rateResponse.data.quotes[`${currency}NGN`]);
+              /**
+               * Load the paystack platform
+               */
+              PaystackPop.setup({
+                key: publicKey,
+                email,
+                amount: loadAmount(Number(total), exchangeRate),
+                callback: (response) => {
+                  if (response.reference) {
+                    const {
+                      reference
+                    } = response;
+                    verifyPayment(reference, secretKey, form, template, packageData, total);
+                  } else {
+                    handlePaystackSubmitError(response);
+                    uiEnd(template, 'Resubmit payment');
+                  }
+                },
 
-          /**
-           *  Actions to run when the payment platform is closed
-           * @returns {*} void
-           */
-          onClose: () => {
-            const error = 'Payment window closed';
-            handlePaystackSubmitError(error);
-            uiEnd(template, 'Resubmit payment');
-          }
-        }).openIframe();
+                /**
+                 *  Actions to run when the payment platform is closed
+                 * @returns {*} void
+                 */
+                onClose: () => {
+                  const error = 'Payment window closed';
+                  handlePaystackSubmitError(error);
+                  uiEnd(template, 'Resubmit payment');
+                }
+              }).openIframe();
+            });
+        } else {
+          Alerts.toast('For Optimal performance, change the shop\'s currency to dollar, else contact the admin');
+          const error = 'Payment window not loaded';
+          handlePaystackSubmitError(error);
+          uiEnd(template, 'Resubmit payment');
+        }
       } else {
         const error = 'Payment window not loaded';
         handlePaystackSubmitError(error);
