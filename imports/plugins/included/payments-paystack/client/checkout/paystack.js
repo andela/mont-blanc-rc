@@ -73,7 +73,7 @@ const verifyPayment = (reference, secretKey, form, template, packageData, total)
         transactionId: transaction.reference,
         riskLevel: 'normal',
         currency: transaction.currency,
-        amount: total,
+        amount: Number(total),
         status: transaction.status ? 'passed' : 'failed',
         mode: 'authorize',
         createdAt: new Date(),
