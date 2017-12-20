@@ -31,7 +31,7 @@ const RatingsForm = ({
         <div className="rating-holder">
           <div className="row">
             <img src="/resources/ratings.png" alt="star rating" />
-            <h6 className="rating-fig">{reviews.length === 0 ? '0.0' : totalRating.toFixed(1)}</h6>
+            <p className="rating-fig">{reviews.length === 0 ? '0.0' : totalRating.toFixed(1)}</p>
           </div>
         </div>
         <div className="row reviewBtn">

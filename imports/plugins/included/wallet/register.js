@@ -1,4 +1,5 @@
-/* eslint camelcase: 0 */import {
+/* eslint camelcase: 0 */
+import {
   Reaction
 } from '/server/api';
 
@@ -16,9 +17,7 @@ Reaction.registerPackage({
     'wallet-paymentmethod': {
       enabled: false,
       support: [
-        'Authorize',
-        'Capture',
-        'Refund'
+        'Authorize'
       ]
     }
   },
