@@ -6,7 +6,7 @@ import { Meteor } from "meteor/meteor";
 import { i18next, Logger, Reaction, formatPriceString } from "/client/api";
 import { Media, Packages } from "/lib/collections";
 import { composeWithTracker, registerComponent } from "@reactioncommerce/reaction-components";
-import Invoice from "../components/invoice.js";
+import Invoice from "../components/invoice";
 import { getOrderRiskStatus, getOrderRiskBadge, getBillingInfo } from "../helpers";
 
 class InvoiceContainer extends Component {
