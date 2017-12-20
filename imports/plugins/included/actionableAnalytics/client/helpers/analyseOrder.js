@@ -18,7 +18,7 @@ export const analyseOrder = (fetchedOrders, fromDate, toDate) => {
   fetchedOrders.forEach((order) => {
     const orderDate = order.createdAt;
     const dateString = orderDate.toISOString().split('T')[0];
-    if (order.workflow.status !== 'canceled') {
+    if (order.workflow.status !== 'coreOrderWorkflow/canceled') {
       ordersAnalytics.push({
         date: dateString,
         country: order.billing[0].address.country,
