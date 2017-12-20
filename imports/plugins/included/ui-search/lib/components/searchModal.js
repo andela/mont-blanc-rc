@@ -29,7 +29,9 @@ class SearchModal extends Component {
     nonDigitalProductArray: [],
     digitalProductArray: [],
     productsArray: [],
-    searchRequested: false
+    searchRequested: false,
+    reversedSortedArray: [],
+    sorted: false,
   }
 
   componentDidMount() {
@@ -54,7 +56,8 @@ class SearchModal extends Component {
     // Update productsArray when there's search update
     this.setState({
       productsArray: nextProps.products,
-      searchRequested: true
+      searchRequested: true,
+      sorted: false
     });
   }
   componentWillUnmount() {
@@ -78,15 +81,16 @@ class SearchModal extends Component {
     }
     this.setState({
       categories: categories[event.target.value],
-      productsArray: _.filter(this.props.products, ["productType", filterTerm])
-
+      productsArray: _.filter(this.props.products, ["productType", filterTerm]),
+      sorted: false
     });
   }
   // filters product by category
   productCategoryFilterChange = (event) => {
     if (event.target.value.toString() !== "--select category--") {
       this.setState({
-        productsArray: _.filter(this.props.products, ["productCategory", event.target.value])
+        productsArray: _.filter(this.props.products, ["productCategory", event.target.value]),
+        sorted: false
       });
     }
   };
@@ -95,13 +99,17 @@ class SearchModal extends Component {
     // check if sorted product array is to be reversed
     let validityCheck = false;
     const sortTypeArray = ["price", "price", "updatedAt", "updatedAt"];
-    const sortedProductsArray = _.sortBy(this.props.products, [sortTypeArray[event.target.value]]);
+    const sortedProductsArray = _.sortBy(this.state.productsArray, [sortTypeArray[event.target.value]]);
+    const reversedSortedArray = _.sortBy(this.state.productsArray, [sortTypeArray[event.target.value]]);
     if (event.target.value === "1" || event.target.value === "2") {
       validityCheck = true;
     }
-    this.setState({
-      productsArray: validityCheck ? _.reverse(sortedProductsArray) : sortedProductsArray
-    });
+    {
+      this.setState({
+        reversedSortedArray: validityCheck ? _.reverse(reversedSortedArray) : sortedProductsArray,
+        sorted: true
+      });
+    }
   }
 
   renderSearchInput() {
@@ -240,7 +248,7 @@ class SearchModal extends Component {
         <div className="rui search-modal-results-container">
           {this.state.productsArray.length > 0 &&
             <ProductGridContainer
-              products={this.state.productsArray}
+              products={this.state.sorted ? this.state.reversedSortedArray : this.state.productsArray}
               unmountMe={this.props.unmountMe}
               isSearch={true}
             />
