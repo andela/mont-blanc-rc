@@ -68,8 +68,8 @@ export default {
     return registeredPackage;
   },
 
-  defaultCustomerRoles: [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "static-page-view","category", "uiproducts", "wallet"],
-  defaultVisitorRoles: ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "static-page-view", "category", "uiproducts"],
+  defaultCustomerRoles: [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "static-page-view","category", "uiproducts", "wallet", "moreStaticPages"],
+  defaultVisitorRoles: ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "static-page-view", "category", "uiproducts", "moreStaticPages"],
   createGroups,
   
   /**
