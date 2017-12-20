@@ -33,7 +33,7 @@ Template.staticPagePanel.helpers({
 });
 
 Template.staticPagePanel.events({
-  'click .deletePage': function(event) {
+  'click .deletePage': function (event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -53,7 +53,7 @@ Template.staticPagePanel.events({
     });
   },
 
-  'click .editPage': function(event) {
+  'click .editPage': function (event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -84,7 +84,7 @@ Template.staticPageForm.events({
     const pageName = field.name.value;
     const pageAddress = field.url.value;
     const pageContent = field.content.value;
-    const isEnabled = field.showOnFooter.value === 'on';
+    const isEnabled = !!$('#showStaticPage').is(':checked');
     const userId = Meteor.userId();
     const shopId = Reaction.getShopId();
     let createdAt = new Date();

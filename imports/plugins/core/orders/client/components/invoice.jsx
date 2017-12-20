@@ -39,7 +39,8 @@ class Invoice extends Component {
   }
 
   state = {
-    isOpen: false
+    isOpen: false,
+    isCanceled: false
   }
 
   /**
@@ -69,6 +70,51 @@ class Invoice extends Component {
     });
   }
 
+  handleCancelButtonClick = (event) => {
+    event.preventDefault();
+    Alerts.alert({
+      title: 'Cancel Order',
+      type: 'question',
+      text: `Are you sure you want to cancel this order?
+      This would fund the customer's wallet with
+       $${this.props.order.billing[0].invoice.total}`,
+      showCancelButton: true,
+    }, () => {
+      const { email } = this.props.order;
+      const amount = this.props.order.billing[0].invoice.total;
+      const transaction = {
+        amount: Number(amount),
+        to: email,
+        date: new Date(),
+        transactionType: 'Credit'
+      };
+
+      Meteor.call('orders/cancelOrder', this.props.order, true);
+
+      Meteor.call(
+        'wallet/transaction',
+        Meteor.userId(),
+        transaction,
+        (err, res) => {
+          if (res === 2) {
+            Alerts.toast(`No user with email ${email}`, 'error');
+          } else if (res === 1) {
+            Alerts.toast('Order successfully cancelled', 'success');
+            this.setState({
+              isCancelled: true
+            });
+          } else {
+            Alerts.toast('An error occured, please try again', 'error');
+          }
+        }
+      );
+
+      this.setState({
+        isCanceled: true
+      });
+    });
+  }
+
   /**
     * @name renderDiscountForm()
     * @method
@@ -80,13 +126,13 @@ class Invoice extends Component {
       <div>
         {this.state.isOpen &&
           <div>
-            <hr/>
+            <hr />
             <Components.DiscountList
               id={this.props.order._id}
               collection="Orders"
               validatedInput={true}
             />
-            <hr/>
+            <hr />
           </div>
         }
       </div>
@@ -131,10 +177,27 @@ class Invoice extends Component {
   renderTotal() {
     return (
       <div className="order-summary-form-group">
-        <hr/>
+        <hr />
         <strong>TOTAL</strong>
         <div className="invoice-details">
           <strong>{formatPriceString(this.props.invoice.total)}</strong>
+        </div>
+      </div>
+    );
+  }
+
+  renderCancelButton() {
+    return (
+      <div className="row cancel-button-row">
+        <div className="col-md-12">
+          {this.props.order.workflow.status === 'coreOrderWorkflow/canceled' || this.state.isCanceled ? ' ' :
+            (
+              <button
+                onClick={this.handleCancelButtonClick}
+                className="btn btn-block btn-danger cancel-button"
+              >Cancel Order
+              </button>
+            )}
         </div>
       </div>
     );
@@ -158,7 +221,9 @@ class Invoice extends Component {
                 {this.renderRefundsInfo()}
               </div>
               :
-              <div> {this.renderTotal()} </div>
+              <div>
+                <div> {this.renderTotal()} </div>
+              </div>
             }
           </span>
         }
@@ -185,21 +250,21 @@ class Invoice extends Component {
         </div>
 
         <div className="order-summary-form-group">
-          <strong><Components.Translation defaultValue="Subtotal" i18nKey="cartSubTotals.subtotal"/></strong>
+          <strong><Components.Translation defaultValue="Subtotal" i18nKey="cartSubTotals.subtotal" /></strong>
           <div className="invoice-details">
             {formatPriceString(invoice.subtotal)}
           </div>
         </div>
 
         <div className="order-summary-form-group">
-          <strong><Components.Translation defaultValue="Shipping" i18nKey="cartSubTotals.shipping"/></strong>
+          <strong><Components.Translation defaultValue="Shipping" i18nKey="cartSubTotals.shipping" /></strong>
           <div className="invoice-details">
             {formatPriceString(invoice.shipping)}
           </div>
         </div>
 
         <div className="order-summary-form-group">
-          <strong><Components.Translation defaultValue="Tax" i18nKey="cartSubTotals.tax"/></strong>
+          <strong><Components.Translation defaultValue="Tax" i18nKey="cartSubTotals.tax" /></strong>
           <div className="invoice-details">
             {formatPriceString(invoice.taxes)}
           </div>
@@ -208,7 +273,7 @@ class Invoice extends Component {
         {discounts &&
           <div>
             <div className="order-summary-form-group">
-              <strong><Components.Translation defaultValue="Discount" i18nKey="cartSubTotals.discount"/></strong>
+              <strong><Components.Translation defaultValue="Discount" i18nKey="cartSubTotals.discount" /></strong>
               <div className="invoice-details">
                 {formatPriceString(invoice.discounts)}
               </div>
@@ -217,6 +282,7 @@ class Invoice extends Component {
           </div>
         }
         {this.renderConditionalDisplay()}
+        {this.renderCancelButton()}
       </div>
     );
   }
@@ -237,7 +303,7 @@ class Invoice extends Component {
               {this.renderInvoice()}
             </div>
 
-            <InvoiceActions {...this.props}/>
+            <InvoiceActions {...this.props} />
           </Components.CardBody>
         </Components.Card>
       </Components.CardGroup>
